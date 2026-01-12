@@ -101,7 +101,6 @@ impl KotaCli {
             "/config".bright_green()
         )?;
         raw_println!("  {} - Show this help message", "/help".bright_green())?;
-        raw_println!("  {} - Login to the service", "/login".bright_green())?;
         raw_println!()?;
         raw_println!(
             "{}",

@@ -11,7 +11,7 @@ use rig::{
 
 use crate::tools::{
     WrappedCreateDirectoryTool, WrappedDeleteFileTool, WrappedEditFileTool, WrappedExecuteBashCommandTool,
-    WrappedReadFileTool, WrappedScanCodebaseTool, WrappedWriteFileTool,
+    WrappedGrepSearchTool, WrappedReadFileTool, WrappedScanCodebaseTool, WrappedWriteFileTool,
 };
 
 #[derive(Debug, Clone)]
@@ -65,6 +65,7 @@ impl AgentBuilder {
                     .tool(tools.execute_bash)
                     .tool(tools.scan_codebase)
                     .tool(tools.create_directory)
+                    .tool(tools.grep_search)
                     .build();
                 Ok(AgentType::OpenAI(agent))
             }
@@ -80,6 +81,7 @@ impl AgentBuilder {
                     .tool(tools.execute_bash)
                     .tool(tools.scan_codebase)
                     .tool(tools.create_directory)
+                    .tool(tools.grep_search)
                     .build();
                 Ok(AgentType::Anthropic(agent))
             }
@@ -95,6 +97,7 @@ impl AgentBuilder {
                     .tool(tools.execute_bash)
                     .tool(tools.scan_codebase)
                     .tool(tools.create_directory)
+                    .tool(tools.grep_search)
                     .build();
                 Ok(AgentType::Cohere(agent))
             }
@@ -110,6 +113,7 @@ impl AgentBuilder {
                     .tool(tools.execute_bash)
                     .tool(tools.scan_codebase)
                     .tool(tools.create_directory)
+                    .tool(tools.grep_search)
                     .build();
                 Ok(AgentType::DeepSeek(agent))
             }
@@ -125,6 +129,7 @@ impl AgentBuilder {
                     .tool(tools.execute_bash)
                     .tool(tools.scan_codebase)
                     .tool(tools.create_directory)
+                    .tool(tools.grep_search)
                     .build();
                 Ok(AgentType::Ollama(agent))
             }
@@ -170,13 +175,14 @@ impl AgentBuilder {
             execute_bash: WrappedExecuteBashCommandTool::new(),
             scan_codebase: WrappedScanCodebaseTool::new(),
             create_directory: WrappedCreateDirectoryTool::new(),
+            grep_search: WrappedGrepSearchTool::new(),
         }
     }
 
     fn get_preamble(&self) -> String {
         r#"
         Your name is Kato. You are a helpful AI code assistant with comprehensive file system and command execution access. 
-        You can read, write, edit (with patches), and delete files, execute bash commands, scan codebase structures, and create directories. 
+        You can read, write, edit (with patches), and delete files, execute bash commands, scan codebase structures,  search text in the codebase and create directories. 
         Use the edit_file tool for making small, targeted changes to existing files - it's more efficient than rewriting entire files.
         Please provide clear and concise responses and be careful when modifying files or executing commands."#.to_string()
     }
@@ -190,6 +196,7 @@ struct AgentTools {
     execute_bash: WrappedExecuteBashCommandTool,
     scan_codebase: WrappedScanCodebaseTool,
     create_directory: WrappedCreateDirectoryTool,
+    grep_search: WrappedGrepSearchTool,
 }
 
 // Convenience function for creating an agent

@@ -10,7 +10,7 @@ pub struct ExecuteBashCommandArgs {
     pub command: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct ExecuteBashCommandOutput {
     pub command: String,
     pub success: bool,

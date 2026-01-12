@@ -11,7 +11,7 @@ pub struct DeleteFileArgs {
     pub file_path: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct DeleteFileOutput {
     pub file_path: String,
     pub success: bool,

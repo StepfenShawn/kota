@@ -11,7 +11,7 @@ pub struct ScanCodebaseArgs {
     pub root_path: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct ScanCodebaseOutput {
     pub root_path: String,
     pub structure: String,

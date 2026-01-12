@@ -283,12 +283,6 @@ impl KotaCli {
             "? for shortcuts, ctrl+c to exit, ctrl+f to add images".dimmed()
         )?;
         raw_println!()?;
-        raw_println!(
-            "{} {}",
-            "Not logged in yet, please log in using the".yellow(),
-            "\"/login\" command".bright_yellow()
-        )?;
-        raw_println!()?;
         Ok(())
     }
 

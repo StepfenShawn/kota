@@ -11,7 +11,7 @@ pub struct ReadFileArgs {
     pub file_path: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct ReadFileOutput {
     pub content: String,
     pub file_path: String,

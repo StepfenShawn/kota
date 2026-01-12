@@ -12,18 +12,20 @@ pub enum FileToolError {
     NotAFile(String),
 }
 
-mod create_directory;
-mod delete_file;
-mod edit_file;
-mod execute_bash_command;
-mod read_file;
-mod scan_codebase;
-mod write_file;
+pub mod create_directory;
+pub mod delete_file;
+pub mod edit_file;
+pub mod execute_bash_command;
+pub mod grep_search;
+pub mod read_file;
+pub mod scan_codebase;
+pub mod write_file;
 
 pub use create_directory::WrappedCreateDirectoryTool;
 pub use delete_file::WrappedDeleteFileTool;
 pub use edit_file::WrappedEditFileTool;
 pub use execute_bash_command::WrappedExecuteBashCommandTool;
+pub use grep_search::WrappedGrepSearchTool;
 pub use read_file::WrappedReadFileTool;
 pub use scan_codebase::WrappedScanCodebaseTool;
 pub use write_file::WrappedWriteFileTool;

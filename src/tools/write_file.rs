@@ -12,7 +12,7 @@ pub struct WriteFileArgs {
     pub content: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct WriteFileOutput {
     pub file_path: String,
     pub bytes_written: u64,

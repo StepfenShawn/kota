@@ -41,6 +41,9 @@ Kota comes with a comprehensive set of file system and development tools:
 - **`create_directory`** - Create directories and all necessary parent directories
 - **`scan_codebase`** - Scan and display the structure of a codebase directory tree
 
+### Search Operations
+- **`grep_search`** - Search for text patterns in files using regular expressions with recursive directory traversal
+
 ### System Operations
 - **`execute_bash_command`** - Execute bash/cmd commands and return output (use with caution)
 

@@ -11,7 +11,7 @@ pub struct CreateDirectoryArgs {
     pub dir_path: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct CreateDirectoryOutput {
     pub dir_path: String,
     pub success: bool,

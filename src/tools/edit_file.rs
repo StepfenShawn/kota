@@ -13,7 +13,7 @@ pub struct EditFileArgs {
     pub patch: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct EditFileOutput {
     pub file_path: String,
     pub lines_added: usize,
