@@ -1,4 +1,5 @@
 // Test modules for all tools
+pub mod test_edit_file;
 pub mod test_read_file;
 pub mod test_write_file;
 

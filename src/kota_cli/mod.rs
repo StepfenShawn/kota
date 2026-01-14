@@ -1,4 +1,5 @@
 use crate::agent::AgentType;
+use crate::context::ContextManager;
 use anyhow::Result;
 use colored::*;
 use crossterm::{
@@ -18,19 +19,32 @@ pub struct KotaCli {
     pub api_base: String,
     pub model_name: String,
     pub agent: AgentType,
+    pub context: ContextManager,
+    pub debug_logging: bool,
 }
 
 impl KotaCli {
-    pub fn new(api_key: String, api_base: String, model_name: String, agent: AgentType) -> Self {
-        Self {
+    pub fn new(
+        api_key: String,
+        api_base: String,
+        model_name: String,
+        agent: AgentType,
+    ) -> Result<Self> {
+        // 创建默认的上下文管理器
+        let context =
+            ContextManager::new("./.chat_sessions", "default".to_string())?.with_max_messages(100);
+
+        Ok(Self {
             api_key,
             api_base,
             model_name,
             agent,
-        }
+            context,
+            debug_logging: false,
+        })
     }
 
-    pub async fn run(&self) -> Result<()> {
+    pub async fn run(&mut self) -> Result<()> {
         self.show_welcome()?;
         self.show_tips()?;
 
@@ -53,7 +67,7 @@ impl KotaCli {
         Ok(())
     }
 
-    async fn run_input_loop(&self) -> Result<()> {
+    async fn run_input_loop(&mut self) -> Result<()> {
         let mut input_buffer = String::new();
         let mut cursor_pos = 0; // 光标在输入缓冲区中的位置
 
@@ -86,12 +100,12 @@ impl KotaCli {
                             let (_, current_row) = cursor::position()?;
 
                             // 检查是否有足够空间向下移动，如果没有则滚动或清屏
-                            if current_row + 3 >= terminal_height {
+                            if current_row + 4 >= terminal_height {
                                 // 空间不足，清屏并重新开始
                                 execute!(stdout, Clear(ClearType::All), cursor::MoveTo(0, 0))?;
                             } else {
                                 // 有足够空间，正常向下移动
-                                execute!(stdout, cursor::MoveDown(2), cursor::MoveToColumn(0))?;
+                                execute!(stdout, cursor::MoveDown(3), cursor::MoveToColumn(0))?;
                             }
 
                             let should_continue = self.handle_command(&input_buffer).await?;
@@ -101,7 +115,7 @@ impl KotaCli {
                             input_buffer.clear();
                             cursor_pos = 0; // 重置光标位置
 
-                            // 重新绘制输入框
+                            // 重新绘制输入框进行下一轮对话
                             self.draw_input_box(&input_buffer, cursor_pos)?;
                         }
                     }

@@ -3,6 +3,8 @@ use dotenv::dotenv;
 use std::env;
 
 mod agent;
+mod context;
+mod hooks;
 mod kota_cli;
 mod tools;
 
@@ -20,7 +22,7 @@ async fn main() -> Result<()> {
     // 创建 agent
     let agent = create_agent(api_key.clone(), model_name.clone())?;
 
-    let cli = KotaCli::new(api_key, api_base, model_name, agent);
+    let mut cli = KotaCli::new(api_key, api_base, model_name, agent)?;
     cli.run().await?;
 
     Ok(())

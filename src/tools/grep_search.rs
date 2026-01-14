@@ -45,23 +45,139 @@ impl GrepSearchTool {
             let ext = extension.to_string_lossy().to_lowercase();
             matches!(
                 ext.as_str(),
-                "rs" | "py" | "js" | "ts" | "jsx" | "tsx" | "html" | "css" | "scss" | "sass"
-                    | "json" | "xml" | "yaml" | "yml" | "toml" | "md" | "txt" | "csv" | "sql"
-                    | "sh" | "bash" | "zsh" | "fish" | "ps1" | "bat" | "cmd" | "c" | "cpp" | "cc"
-                    | "cxx" | "h" | "hpp" | "hxx" | "java" | "kt" | "scala" | "go" | "php"
-                    | "rb" | "swift" | "dart" | "r" | "m" | "mm" | "pl" | "pm" | "lua" | "vim"
-                    | "el" | "clj" | "cljs" | "hs" | "ml" | "fs" | "fsx" | "ex" | "exs" | "erl"
-                    | "hrl" | "nim" | "cr" | "d" | "zig" | "v" | "jl" | "rkt" | "scm" | "ss"
-                    | "lisp" | "lsp" | "cl" | "asd" | "pro" | "prolog" | "dockerfile"
-                    | "makefile" | "mk" | "cmake" | "gradle" | "sbt" | "pom" | "gemfile"
-                    | "rakefile" | "podfile" | "cartfile" | "brewfile" | "vagrantfile"
-                    | "gitignore" | "gitattributes" | "editorconfig" | "eslintrc" | "prettierrc"
-                    | "babelrc" | "tsconfig" | "jsconfig" | "webpack" | "rollup" | "vite"
-                    | "package" | "lock" | "sum" | "mod" | "ini" | "cfg" | "conf" | "config"
-                    | "properties" | "env" | "example" | "sample" | "template" | "stub"
-                    | "proto" | "graphql" | "gql" | "schema" | "prisma" | "ddl"
-                    | "dml" | "hql" | "cql" | "psql" | "mysql" | "sqlite" | "db" | "log"
-                    | "out" | "err" | "trace" | "debug" | "info" | "warn" | "error" | "fatal"
+                "rs" | "py"
+                    | "js"
+                    | "ts"
+                    | "jsx"
+                    | "tsx"
+                    | "html"
+                    | "css"
+                    | "scss"
+                    | "sass"
+                    | "json"
+                    | "xml"
+                    | "yaml"
+                    | "yml"
+                    | "toml"
+                    | "md"
+                    | "txt"
+                    | "csv"
+                    | "sql"
+                    | "sh"
+                    | "bash"
+                    | "zsh"
+                    | "fish"
+                    | "ps1"
+                    | "bat"
+                    | "cmd"
+                    | "c"
+                    | "cpp"
+                    | "cc"
+                    | "cxx"
+                    | "h"
+                    | "hpp"
+                    | "hxx"
+                    | "java"
+                    | "kt"
+                    | "scala"
+                    | "go"
+                    | "php"
+                    | "rb"
+                    | "swift"
+                    | "dart"
+                    | "r"
+                    | "m"
+                    | "mm"
+                    | "pl"
+                    | "pm"
+                    | "lua"
+                    | "vim"
+                    | "el"
+                    | "clj"
+                    | "cljs"
+                    | "hs"
+                    | "ml"
+                    | "fs"
+                    | "fsx"
+                    | "ex"
+                    | "exs"
+                    | "erl"
+                    | "hrl"
+                    | "nim"
+                    | "cr"
+                    | "d"
+                    | "zig"
+                    | "v"
+                    | "jl"
+                    | "rkt"
+                    | "scm"
+                    | "ss"
+                    | "lisp"
+                    | "lsp"
+                    | "cl"
+                    | "asd"
+                    | "pro"
+                    | "prolog"
+                    | "dockerfile"
+                    | "makefile"
+                    | "mk"
+                    | "cmake"
+                    | "gradle"
+                    | "sbt"
+                    | "pom"
+                    | "gemfile"
+                    | "rakefile"
+                    | "podfile"
+                    | "cartfile"
+                    | "brewfile"
+                    | "vagrantfile"
+                    | "gitignore"
+                    | "gitattributes"
+                    | "editorconfig"
+                    | "eslintrc"
+                    | "prettierrc"
+                    | "babelrc"
+                    | "tsconfig"
+                    | "jsconfig"
+                    | "webpack"
+                    | "rollup"
+                    | "vite"
+                    | "package"
+                    | "lock"
+                    | "sum"
+                    | "mod"
+                    | "ini"
+                    | "cfg"
+                    | "conf"
+                    | "config"
+                    | "properties"
+                    | "env"
+                    | "example"
+                    | "sample"
+                    | "template"
+                    | "stub"
+                    | "proto"
+                    | "graphql"
+                    | "gql"
+                    | "schema"
+                    | "prisma"
+                    | "ddl"
+                    | "dml"
+                    | "hql"
+                    | "cql"
+                    | "psql"
+                    | "mysql"
+                    | "sqlite"
+                    | "db"
+                    | "log"
+                    | "out"
+                    | "err"
+                    | "trace"
+                    | "debug"
+                    | "info"
+                    | "warn"
+                    | "error"
+                    | "fatal"
             )
         } else {
             // Check for files without extensions that are commonly text files
@@ -69,10 +185,25 @@ impl GrepSearchTool {
                 let name = file_name.to_string_lossy().to_lowercase();
                 matches!(
                     name.as_str(),
-                    "readme" | "license" | "changelog" | "authors" | "contributors"
-                        | "makefile" | "dockerfile" | "vagrantfile" | "gemfile" | "rakefile"
-                        | "podfile" | "cartfile" | "brewfile" | "procfile" | "justfile"
-                        | "taskfile" | "buildfile" | "gradlew" | "mvnw"
+                    "readme"
+                        | "license"
+                        | "changelog"
+                        | "authors"
+                        | "contributors"
+                        | "makefile"
+                        | "dockerfile"
+                        | "vagrantfile"
+                        | "gemfile"
+                        | "rakefile"
+                        | "podfile"
+                        | "cartfile"
+                        | "brewfile"
+                        | "procfile"
+                        | "justfile"
+                        | "taskfile"
+                        | "buildfile"
+                        | "gradlew"
+                        | "mvnw"
                 )
             } else {
                 false
@@ -83,11 +214,41 @@ impl GrepSearchTool {
     fn should_skip_directory(dir_name: &str) -> bool {
         matches!(
             dir_name,
-            "target" | "node_modules" | "__pycache__" | ".git" | ".svn" | ".hg" | ".bzr"
-                | "dist" | "build" | "out" | "bin" | "obj" | ".vscode" | ".idea" | ".vs"
-                | "coverage" | ".nyc_output" | ".pytest_cache" | ".tox" | "venv" | "env"
-                | ".env" | "vendor" | "deps" | "_build" | ".elixir_ls" | ".mix" | "tmp"
-                | "temp" | "cache" | ".cache" | "logs" | "log" | ".DS_Store" | "Thumbs.db"
+            "target"
+                | "node_modules"
+                | "__pycache__"
+                | ".git"
+                | ".svn"
+                | ".hg"
+                | ".bzr"
+                | "dist"
+                | "build"
+                | "out"
+                | "bin"
+                | "obj"
+                | ".vscode"
+                | ".idea"
+                | ".vs"
+                | "coverage"
+                | ".nyc_output"
+                | ".pytest_cache"
+                | ".tox"
+                | "venv"
+                | "env"
+                | ".env"
+                | "vendor"
+                | "deps"
+                | "_build"
+                | ".elixir_ls"
+                | ".mix"
+                | "tmp"
+                | "temp"
+                | "cache"
+                | ".cache"
+                | "logs"
+                | "log"
+                | ".DS_Store"
+                | "Thumbs.db"
         )
     }
 
@@ -231,7 +392,10 @@ impl Tool for GrepSearchTool {
         let total_matches = all_matches.len();
         let success = true;
         let message = if total_matches == 0 {
-            format!("No matches found for '{}' in {} files", query, files_searched)
+            format!(
+                "No matches found for '{}' in {} files",
+                query, files_searched
+            )
         } else if total_matches >= max_results {
             format!(
                 "Found {} matches (limit reached) for '{}' in {} files",
@@ -294,17 +458,26 @@ impl Tool for WrappedGrepSearchTool {
 
         match &result {
             Ok(output) => {
-                println!("{} {}", "✅".bright_green(), "Search completed.".bright_green());
+                println!(
+                    "{} {}",
+                    "✅".bright_green(),
+                    "Search completed.".bright_green()
+                );
                 println!("{}", output.message.bright_white());
-                
+
                 if !output.matches.is_empty() {
                     println!("\n{}", "🔍 Search Results:".bright_white());
                     for (i, search_match) in output.matches.iter().enumerate() {
-                        if i >= 20 {  // Limit console output to first 20 matches
-                            println!("  {} (showing first 20 of {} matches)", "...".dimmed(), output.total_matches);
+                        if i >= 20 {
+                            // Limit console output to first 20 matches
+                            println!(
+                                "  {} (showing first 20 of {} matches)",
+                                "...".dimmed(),
+                                output.total_matches
+                            );
                             break;
                         }
-                        
+
                         println!(
                             "  {}:{}:{} {}",
                             search_match.file_path.bright_cyan(),
@@ -314,7 +487,7 @@ impl Tool for WrappedGrepSearchTool {
                         );
                     }
                 }
-                
+
                 println!(
                     "\n{} {} matches in {} files",
                     "📊".bright_blue(),

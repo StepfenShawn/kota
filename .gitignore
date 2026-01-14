@@ -3,3 +3,6 @@
 # 环境变量文件
 .env
 test_file.txt
+.chat_sessions
+docs
+examples

@@ -10,8 +10,9 @@ use rig::{
 };
 
 use crate::tools::{
-    WrappedCreateDirectoryTool, WrappedDeleteFileTool, WrappedEditFileTool, WrappedExecuteBashCommandTool,
-    WrappedGrepSearchTool, WrappedReadFileTool, WrappedScanCodebaseTool, WrappedWriteFileTool,
+    WrappedCreateDirectoryTool, WrappedDeleteFileTool, WrappedEditFileTool,
+    WrappedExecuteBashCommandTool, WrappedGrepSearchTool, WrappedReadFileTool,
+    WrappedScanCodebaseTool, WrappedWriteFileTool,
 };
 
 #[derive(Debug, Clone)]

@@ -45,7 +45,7 @@ impl Tool for EditFileTool {
                     },
                     "patch": {
                         "type": "string",
-                        "description": "A unified diff patch to apply to the file. Format: '@@ -old_start,old_count +new_start,new_count @@' followed by lines prefixed with ' ' (context), '-' (remove), or '+' (add). Example:\n@@ -1,3 +1,4 @@\n fn main() {\n+    println!(\"Hello, world!\");\n     // existing code\n }"
+                        "description": "A unified diff patch string in standard format. CRITICAL REQUIREMENTS:\n1. MUST start with '--- a/filename' header line\n2. MUST have '+++ b/filename' as second line\n3. MUST have hunk header: '@@ -old_start,old_count +new_start,new_count @@'\n4. Context lines MUST start with ' ' (space)\n5. Removed lines MUST start with '-'\n6. Added lines MUST start with '+'\n7. EVERY line (including the last) MUST end with '\\n'\n\nExample:\n--- a/main.rs\n+++ b/main.rs\n@@ -1,3 +1,4 @@\n fn main() {\n+    println!(\"Hello, world!\");\n     // existing code\n }\n"
                     }
                 },
                 "required": ["file_path", "patch"]
@@ -71,8 +71,15 @@ impl Tool for EditFileTool {
         // Read the current file content
         let current_content = fs::read_to_string(file_path)?;
 
+        // Ensure patch_str ends with a newline
+        let patch_str_normalized = if !patch_str.ends_with('\n') {
+            format!("{}\n", patch_str)
+        } else {
+            patch_str.to_string()
+        };
+
         // Parse the patch
-        let patch = Patch::from_single(patch_str).map_err(|e| {
+        let patch = Patch::from_single(&patch_str_normalized).map_err(|e| {
             FileToolError::Io(std::io::Error::new(
                 std::io::ErrorKind::InvalidData,
                 format!("Failed to parse patch: {}", e),

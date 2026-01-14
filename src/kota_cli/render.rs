@@ -20,8 +20,15 @@ impl KotaCli {
         // 检查是否有足够的垂直空间绘制输入框（需要5行）
         let (_, current_row) = cursor::position()?;
         if current_row + 5 >= terminal_height {
-            // 空间不足，清屏重新开始
-            execute!(stdout, Clear(ClearType::All), cursor::MoveTo(0, 0))?;
+            // 空间不足，向下滚动5行来腾出空间
+            // 移动到终端底部
+            execute!(stdout, cursor::MoveTo(0, terminal_height))?;
+            // 插入5个空行，这会让现有内容向下滚动
+            for _ in 0..5 {
+                println!();
+            }
+            // 移动到底部准备绘制输入框（预留5行空间）
+            execute!(stdout, cursor::MoveTo(0, terminal_height - 5))?;
         }
 
         // 清除可能存在的旧内容
@@ -90,7 +97,7 @@ impl KotaCli {
 
         // 绘制提示信息
         execute!(stdout, cursor::MoveToColumn(0))?;
-        let tip_text = "? for shortcuts, ctrl+c to exit, ctrl+f to add images";
+        let tip_text = "ctrl+c to exit, /help to help";
         if tip_text.len() <= terminal_width as usize {
             println!("{}", tip_text.dimmed());
         } else {
