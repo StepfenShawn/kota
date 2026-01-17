@@ -34,6 +34,7 @@ impl Default for KotaHelper {
         commands.insert("/help".to_string());
         commands.insert("/history".to_string());
         commands.insert("/load".to_string());
+        commands.insert("/sessions".to_string());
         commands.insert("/delete".to_string());
 
         Self {

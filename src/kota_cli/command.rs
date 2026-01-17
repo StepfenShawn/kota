@@ -26,11 +26,10 @@ impl KotaCli {
             }
             _ if input.starts_with("/load ") => {
                 let session_id = input.strip_prefix("/load ").unwrap_or("").trim();
-                if session_id.is_empty() {
-                    self.list_sessions()?;
-                } else {
-                    self.load_session(session_id)?;
-                }
+                self.load_session(session_id)?;
+            }
+            _ if input.starts_with("/sessions") => {
+                self.list_sessions()?;
             }
             _ if input.starts_with("/delete ") => {
                 let session_id = input.strip_prefix("/delete ").unwrap_or("").trim();
@@ -157,9 +156,10 @@ impl KotaCli {
             "/history".bright_green()
         );
         println!(
-            "  {} - List all sessions or load specific session",
-            "/load [session_id]".bright_green()
+            "  {} - Load specific session",
+            "/load <session_id>".bright_green()
         );
+        println!("  {} - List all sessions", "/sessions".bright_green());
         println!(
             "  {} - Delete a specific session",
             "/delete <session_id>".bright_green()

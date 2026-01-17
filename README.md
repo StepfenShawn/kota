@@ -1,5 +1,7 @@
 # Kota
-A lightweight AI code agent in Rust.
+A lightweight AI code agent in Rust:  
+
+![kota_screenshot](assert/screenshort.jpg)
 
 ## Setup
 
@@ -19,13 +21,25 @@ Before running Kota, you need to create a `.env` file with your API configuratio
    ```
 
    - `API_KEY`: Your LLM provider API key
-   - `MODEL_NAME`: The model to use (e.g., deepseek-chat, gpt-4o)
+   - `MODEL_NAME`: The model to use (see supported models below)
 
 ### Running Kota
 
 ```bash
 cargo run -r
 ```
+
+## Supported Models
+
+Kota supports various LLM providers:
+
+- **OpenAI Compatible** - (e.g., gpt-4o, gpt-4o-mini, gpt-4-turbo, gpt-3.5-turbo...)
+- **DeepSeek** - (e.g., deepseek-chat, deepseek-coder...)
+- **Anthropic Claude** (e.g., claude-3-5-sonnet, claude-4-opus...)
+
+### Other Providers
+- Any OpenAI-compatible API endpoint can be configured
+- Local models via Ollama or similar services
 
 ## CLI Features
 
@@ -37,7 +51,8 @@ Kota provides an interactive CLI with the following commands:
 - `/config` - Show current model configuration
 - `/help` - Show available commands
 - `/history` - Show conversation history
-- `/load [session_id]` - List all sessions or load specific session
+- `/load <session_id>` - Load specific session
+- `/list` - List all sessions
 - `/delete <session_id>` - Delete a specific session
 
 ### Tab Completion
@@ -75,3 +90,24 @@ Kota comes with a comprehensive set of file system and development tools:
 - **`execute_bash_command`** - Execute bash/cmd commands and return output (use with caution)
 
 Each tool provides detailed feedback during execution and handles common error cases like permission issues and missing files.
+
+## Roadmap & TODO
+
+### Upcoming Features
+
+1. **MCP (Model Context Protocol) Support**
+   - Integration with MCP servers for extended functionality
+   - Support for custom MCP tools and resources
+   - Enhanced context management through MCP
+
+2. **Claude Skills Integration**
+   - Implement Claude-like skills system for specialized capabilities
+   - Modular skill architecture for extensibility
+   - Built-in skills for common development tasks
+
+### Future Enhancements
+- Plugin system for custom tools
+- Enhanced session management
+- Multi-project workspace support
+- Integration with popular IDEs and editors
+
