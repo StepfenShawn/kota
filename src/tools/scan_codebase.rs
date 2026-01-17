@@ -3,7 +3,6 @@ use colored::*;
 use rig::{completion::ToolDefinition, tool::Tool};
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::io::{self, Write};
 use std::path::Path;
 
 #[derive(Deserialize)]
@@ -174,47 +173,24 @@ impl Tool for WrappedScanCodebaseTool {
     }
 
     async fn call(&self, args: Self::Args) -> Result<Self::Output, Self::Error> {
-        // 显示工具调用开始
-        println!(
-            "\n{} {} {}",
-            "🔧".bright_blue(),
-            "Tool:".bright_white(),
-            format!("Scanning codebase at '{}'", args.root_path).cyan()
-        );
-        io::stdout().flush().unwrap();
+        println!();
+        println!("{} {}({})", "●".bright_green(), "Scan", args.root_path);
 
-        // 调用实际工具
         let result = self.inner.call(args).await;
 
-        // 显示工具调用结果
         match &result {
             Ok(output) => {
                 println!(
-                    "{} {}",
-                    "✅".bright_green(),
-                    "Scan completed.".bright_green()
-                );
-                println!("{}", "Directory structure:".bright_white());
-                println!("{}", output.structure);
-                println!(
-                    "{} {} files, {} directories",
-                    "📊".bright_blue(),
-                    output.total_files.to_string().bright_cyan(),
-                    output.total_directories.to_string().bright_cyan()
+                    "  └─ {} files, {} directories",
+                    output.total_files.to_string().dimmed(),
+                    output.total_directories.to_string().dimmed()
                 );
             }
             Err(e) => {
-                println!(
-                    "{} {} {}",
-                    "❌".bright_red(),
-                    "Error:".bright_red(),
-                    e.to_string().red()
-                );
+                println!("  └─ {}", format!("Error: {}", e).red());
             }
         }
-        println!(); // 添加空行
-        io::stdout().flush().unwrap();
-
+        println!();
         result
     }
 }

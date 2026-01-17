@@ -49,13 +49,11 @@ impl KotaCli {
                 self.context.add_message(Message::user(input));
 
                 println!("{}", "🧠 Thinking...".yellow());
-                println!("{}", "● kota:".green());
+                println!("{}", "● kota:".blue());
 
                 // 创建会话钩子
-                let hook = SessionIdHook::new(self.context.session_id().to_string())
-                    .with_logging(self.debug_logging);
+                let hook = SessionIdHook::new(self.context.session_id().to_string());
 
-                // 使用正常模式处理流输出，避免换行问题
                 let response_result = match &self.agent {
                     AgentType::OpenAI(agent) => {
                         let mut stream = agent

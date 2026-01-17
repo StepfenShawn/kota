@@ -4,7 +4,6 @@ use regex::Regex;
 use rig::{completion::ToolDefinition, tool::Tool};
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::io::{self, Write};
 use std::path::Path;
 use walkdir::WalkDir;
 
@@ -446,67 +445,31 @@ impl Tool for WrappedGrepSearchTool {
     }
 
     async fn call(&self, args: Self::Args) -> Result<Self::Output, Self::Error> {
-        println!(
-            "\n{} {} {}",
-            "🔧".bright_blue(),
-            "Tool:".bright_white(),
-            format!("Searching for '{}' in '{}'", args.query, args.root_path).cyan()
-        );
-        io::stdout().flush().unwrap();
+        println!();
+        println!("{} {}({})", "●".bright_green(), "Glob", args.query);
 
         let result = self.inner.call(args).await;
 
         match &result {
             Ok(output) => {
-                println!(
-                    "{} {}",
-                    "✅".bright_green(),
-                    "Search completed.".bright_green()
-                );
-                println!("{}", output.message.bright_white());
-
-                if !output.matches.is_empty() {
-                    println!("\n{}", "🔍 Search Results:".bright_white());
-                    for (i, search_match) in output.matches.iter().enumerate() {
-                        if i >= 20 {
-                            // Limit console output to first 20 matches
-                            println!(
-                                "  {} (showing first 20 of {} matches)",
-                                "...".dimmed(),
-                                output.total_matches
-                            );
-                            break;
-                        }
-
-                        println!(
-                            "  {}:{}:{} {}",
-                            search_match.file_path.bright_cyan(),
-                            search_match.line_number.to_string().bright_yellow(),
-                            search_match.match_start.to_string().dimmed(),
-                            search_match.line_content.trim()
-                        );
-                    }
+                let match_count = output.matches.len();
+                if match_count > 0 {
+                    let first_match = &output.matches[0];
+                    let preview = if first_match.line_content.len() > 50 {
+                        format!("{}...", &first_match.line_content[..50])
+                    } else {
+                        first_match.line_content.clone()
+                    };
+                    println!("  └─ {} ... +{} matches", preview.dimmed(), match_count);
+                } else {
+                    println!("  └─ {}", "No matches found".dimmed());
                 }
-
-                println!(
-                    "\n{} {} matches in {} files",
-                    "📊".bright_blue(),
-                    output.total_matches.to_string().bright_cyan(),
-                    output.files_searched.to_string().bright_cyan()
-                );
             }
             Err(e) => {
-                println!(
-                    "{} {} {}",
-                    "❌".bright_red(),
-                    "Error:".bright_red(),
-                    e.to_string().red()
-                );
+                println!("  └─ {}", format!("Error: {}", e).red());
             }
         }
-        println!(); // Add empty line
-        io::stdout().flush().unwrap();
-
+        println!();
         result
     }
 }

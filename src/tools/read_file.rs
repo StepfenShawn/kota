@@ -3,7 +3,6 @@ use colored::*;
 use rig::{completion::ToolDefinition, tool::Tool};
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::io::{self, Write};
 use std::path::Path;
 
 #[derive(Deserialize)]
@@ -114,32 +113,33 @@ impl Tool for WrappedReadFileTool {
     }
 
     async fn call(&self, args: Self::Args) -> Result<Self::Output, Self::Error> {
-        println!(
-            "\n{} {} {}",
-            "🔧".bright_blue(),
-            "Tool:".bright_white(),
-            format!("Reading file '{}'", args.file_path).cyan()
-        );
-        io::stdout().flush().unwrap();
+        println!();
+        println!("{} {}({})", "●".bright_green(), "Read", args.file_path);
 
         let result = self.inner.call(args).await;
 
         match &result {
-            Ok(_output) => {
-                println!("{} {}", "✅".bright_green(), "Done.".bright_green());
-            }
-            Err(e) => {
+            Ok(output) => {
+                // 对于读取文件，显示行数和预览
+                let line_count = output.content.lines().count();
+                let first_line = output.content.lines().next().unwrap_or("");
+                let preview = if first_line.len() > 50 {
+                    format!("{}...", &first_line[..50])
+                } else {
+                    first_line.to_string()
+                };
                 println!(
-                    "{} {} {}",
-                    "❌".bright_red(),
-                    "Error:".bright_red(),
-                    e.to_string().red()
+                    "  └─ {}| {} ... +{} lines",
+                    "1".dimmed(),
+                    preview.dimmed(),
+                    line_count
                 );
             }
+            Err(e) => {
+                println!("  └─ {}", format!("Error: {}", e).red());
+            }
         }
-        println!(); // 添加空行
-        io::stdout().flush().unwrap();
-
+        println!();
         result
     }
 }

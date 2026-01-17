@@ -3,7 +3,6 @@ use colored::*;
 use rig::{completion::ToolDefinition, tool::Tool};
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::io::{self, Write};
 use std::path::Path;
 
 #[derive(Deserialize)]
@@ -120,41 +119,24 @@ impl Tool for WrappedCreateDirectoryTool {
     }
 
     async fn call(&self, args: Self::Args) -> Result<Self::Output, Self::Error> {
-        // 显示工具调用开始
-        println!(
-            "\n{} {} {}",
-            "🔧".bright_blue(),
-            "Tool:".bright_white(),
-            format!("Creating directory '{}'", args.dir_path).cyan()
-        );
-        io::stdout().flush().unwrap();
+        println!();
+        println!("{} {}({})", "●".bright_green(), "CreateDir", args.dir_path);
 
-        // 调用实际工具
         let result = self.inner.call(args).await;
 
-        // 显示工具调用结果
         match &result {
             Ok(output) => {
-                println!("{} {}", "✅".bright_green(), "Done.".bright_green());
                 if output.created_parents {
-                    println!(
-                        "{}",
-                        "📁 Created parent directories as needed.".bright_blue()
-                    );
+                    println!("  └─ {} (with parents)", "Directory created".dimmed());
+                } else {
+                    println!("  └─ {}", "Directory created".dimmed());
                 }
             }
             Err(e) => {
-                println!(
-                    "{} {} {}",
-                    "❌".bright_red(),
-                    "Error:".bright_red(),
-                    e.to_string().red()
-                );
+                println!("  └─ {}", format!("Error: {}", e).red());
             }
         }
-        println!(); // 添加空行
-        io::stdout().flush().unwrap();
-
+        println!();
         result
     }
 }

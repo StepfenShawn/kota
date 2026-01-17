@@ -2,7 +2,6 @@ use super::FileToolError;
 use colored::*;
 use rig::{completion::ToolDefinition, tool::Tool};
 use serde::{Deserialize, Serialize};
-use std::io::{self, Write};
 use std::process::Command;
 
 #[derive(Deserialize)]
@@ -101,55 +100,38 @@ impl Tool for WrappedExecuteBashCommandTool {
     }
 
     async fn call(&self, args: Self::Args) -> Result<Self::Output, Self::Error> {
-        // 显示工具调用开始
-        println!(
-            "\n{} {} {}",
-            "🔧".bright_blue(),
-            "Tool:".bright_white(),
-            format!("Executing command '{}'", args.command).cyan()
-        );
-        io::stdout().flush().unwrap();
+        println!();
+        println!("{} {}({})", "●".bright_green(), "Exec", args.command);
 
-        // 调用实际工具
         let result = self.inner.call(args).await;
 
-        // 显示工具调用结果
         match &result {
             Ok(output) => {
                 if output.success {
-                    println!(
-                        "{} {}",
-                        "✅".bright_green(),
-                        "Command executed successfully.".bright_green()
-                    );
-                    if !output.stdout.is_empty() {
-                        println!("{}", "Output:".bright_white());
-                        println!("{}", output.stdout);
+                    let stdout_lines = output.stdout.lines().count();
+                    if stdout_lines > 0 {
+                        println!(
+                            "  └─ {} ... +{} lines output",
+                            "Command succeeded".dimmed(),
+                            stdout_lines
+                        );
+                    } else {
+                        println!("  └─ {}", "Command succeeded".dimmed());
                     }
                 } else {
+                    let stderr_lines = output.stderr.lines().count();
                     println!(
-                        "{} {}",
-                        "⚠️".bright_yellow(),
-                        "Command failed.".bright_yellow()
+                        "  └─ {} (exit: {})",
+                        format!("Command failed, {} lines stderr", stderr_lines).red(),
+                        output.exit_code.unwrap_or(-1)
                     );
-                    if !output.stderr.is_empty() {
-                        println!("{}", "Error:".bright_red());
-                        println!("{}", output.stderr.red());
-                    }
                 }
             }
             Err(e) => {
-                println!(
-                    "{} {} {}",
-                    "❌".bright_red(),
-                    "Error:".bright_red(),
-                    e.to_string().red()
-                );
+                println!("  └─ {}", format!("Error: {}", e).red());
             }
         }
-        println!(); // 添加空行
-        io::stdout().flush().unwrap();
-
+        println!();
         result
     }
 }

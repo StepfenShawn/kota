@@ -4,7 +4,6 @@ use patch_apply::{apply, Patch};
 use rig::{completion::ToolDefinition, tool::Tool};
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::io::{self, Write};
 use std::path::Path;
 
 #[derive(Deserialize)]
@@ -149,42 +148,25 @@ impl Tool for WrappedEditFileTool {
     }
 
     async fn call(&self, args: Self::Args) -> Result<Self::Output, Self::Error> {
-        // Display tool call start
-        println!(
-            "\n{} {} {}",
-            "🔧".bright_blue(),
-            "Tool:".bright_white(),
-            format!("Applying patch to file '{}'", args.file_path).cyan()
-        );
-        io::stdout().flush().unwrap();
+        println!();
+        println!("{} {}({})", "●".bright_green(), "Edit", args.file_path);
 
-        // Call the actual tool
         let result = self.inner.call(args).await;
 
-        // Display tool call result
         match &result {
             Ok(output) => {
                 println!(
-                    "{} {} {} (+{} lines, -{} lines)",
-                    "✅".bright_green(),
-                    "Success:".bright_green(),
-                    format!("Patched file '{}'", output.file_path).green(),
-                    output.lines_added.to_string().bright_white(),
-                    output.lines_removed.to_string().bright_white()
+                    "  └─ {} (+{} lines, -{} lines)",
+                    format!("Patched '{}'", output.file_path).dimmed(),
+                    output.lines_added.to_string().green(),
+                    output.lines_removed.to_string().red()
                 );
             }
             Err(e) => {
-                println!(
-                    "{} {} {}",
-                    "❌".bright_red(),
-                    "Error:".bright_red(),
-                    e.to_string().red()
-                );
+                println!("  └─ {}", format!("Error: {}", e).red());
             }
         }
-        println!(); // Add empty line
-        io::stdout().flush().unwrap();
-
+        println!();
         result
     }
 }

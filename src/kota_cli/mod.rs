@@ -22,8 +22,7 @@ pub struct KotaCli {
     pub api_base: String,
     pub model_name: String,
     pub agent: AgentType,
-    pub context: ContextManager,
-    pub debug_logging: bool,
+    pub context: ContextManager
 }
 
 impl KotaCli {
@@ -43,7 +42,6 @@ impl KotaCli {
             model_name,
             agent,
             context,
-            debug_logging: false,
         })
     }
 
@@ -69,10 +67,7 @@ impl KotaCli {
         let mut rl = DefaultEditor::new()?;
 
         loop {
-            // 显示分隔线
             self.print_separator()?;
-
-            // 读取用户输入（不使用颜色，避免光标位置错误）
             let readline = rl.readline("❯ ");
 
             match readline {
