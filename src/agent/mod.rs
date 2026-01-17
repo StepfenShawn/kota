@@ -27,8 +27,8 @@ macro_rules! build_agent {
             .tool($tools.delete_file)
             .tool($tools.execute_bash)
             .tool($tools.scan_codebase)
-            .tool($tools.create_directory)
-            .tool($tools.grep_search)
+            .tool($tools.make_dir)
+            .tool($tools.grep_find)
             .build();
         Ok(AgentType::$variant(agent))
     }};
@@ -159,8 +159,8 @@ impl AgentBuilder {
             delete_file: WrappedDeleteFileTool::new(),
             execute_bash: WrappedExecuteBashCommandTool::new(),
             scan_codebase: WrappedScanCodebaseTool::new(),
-            create_directory: WrappedCreateDirectoryTool::new(),
-            grep_search: WrappedGrepSearchTool::new(),
+            make_dir: WrappedCreateDirectoryTool::new(),
+            grep_find: WrappedGrepSearchTool::new(),
         }
     }
 
@@ -180,8 +180,8 @@ struct AgentTools {
     delete_file: WrappedDeleteFileTool,
     execute_bash: WrappedExecuteBashCommandTool,
     scan_codebase: WrappedScanCodebaseTool,
-    create_directory: WrappedCreateDirectoryTool,
-    grep_search: WrappedGrepSearchTool,
+    make_dir: WrappedCreateDirectoryTool,
+    grep_find: WrappedGrepSearchTool,
 }
 
 // Convenience function for creating an agent

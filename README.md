@@ -80,14 +80,14 @@ Kota comes with a comprehensive set of file system and development tools:
 - **`delete_file`** - Delete a file from the filesystem
 
 ### Directory Operations
-- **`create_directory`** - Create directories and all necessary parent directories
+- **`make_dir`** - Create directories and all necessary parent directories
 - **`scan_codebase`** - Scan and display the structure of a codebase directory tree
 
 ### Search Operations
-- **`grep_search`** - Search for text patterns in files using regular expressions with recursive directory traversal
+- **`grep_find`** - Search for text patterns in files using regular expressions with recursive directory traversal
 
 ### System Operations
-- **`execute_bash_command`** - Execute bash/cmd commands and return output (use with caution)
+- **`exec_cmd`** - Execute bash/cmd commands and return output (use with caution)
 
 Each tool provides detailed feedback during execution and handles common error cases like permission issues and missing files.
 

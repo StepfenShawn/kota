@@ -22,7 +22,7 @@ pub struct CreateDirectoryOutput {
 pub struct CreateDirectoryTool;
 
 impl Tool for CreateDirectoryTool {
-    const NAME: &'static str = "create_directory";
+    const NAME: &'static str = "make_dir";
 
     type Error = FileToolError;
     type Args = CreateDirectoryArgs;
@@ -30,7 +30,7 @@ impl Tool for CreateDirectoryTool {
 
     async fn definition(&self, _prompt: String) -> ToolDefinition {
         ToolDefinition {
-            name: "create_directory".to_string(),
+            name: "make_dir".to_string(),
             description: "Create a directory and all necessary parent directories. If the directory already exists, the operation succeeds.".to_string(),
             parameters: serde_json::json!({
                 "type": "object",
@@ -108,7 +108,7 @@ impl WrappedCreateDirectoryTool {
 }
 
 impl Tool for WrappedCreateDirectoryTool {
-    const NAME: &'static str = "create_directory";
+    const NAME: &'static str = "make_dir";
 
     type Error = FileToolError;
     type Args = <CreateDirectoryTool as Tool>::Args;

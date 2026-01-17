@@ -37,7 +37,7 @@ pub struct GrepSearchOutput {
 pub struct GrepSearchTool;
 
 impl Tool for GrepSearchTool {
-    const NAME: &'static str = "grep_search";
+    const NAME: &'static str = "grep_find";
 
     type Error = FileToolError;
     type Args = GrepSearchArgs;
@@ -45,7 +45,7 @@ impl Tool for GrepSearchTool {
 
     async fn definition(&self, _prompt: String) -> ToolDefinition {
         ToolDefinition {
-            name: "grep_search".to_string(),
+            name: "grep_find".to_string(),
             description:
                 "Search for text patterns in files using regex. Respects .gitignore automatically."
                     .to_string(),
@@ -141,7 +141,7 @@ impl WrappedGrepSearchTool {
 }
 
 impl Tool for WrappedGrepSearchTool {
-    const NAME: &'static str = "grep_search";
+    const NAME: &'static str = "grep_find";
     type Error = FileToolError;
     type Args = <GrepSearchTool as Tool>::Args;
     type Output = <GrepSearchTool as Tool>::Output;

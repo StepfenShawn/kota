@@ -22,7 +22,7 @@ pub struct ExecuteBashCommandOutput {
 pub struct ExecuteBashCommandTool;
 
 impl Tool for ExecuteBashCommandTool {
-    const NAME: &'static str = "execute_bash_command";
+    const NAME: &'static str = "exec_cmd";
 
     type Error = FileToolError;
     type Args = ExecuteBashCommandArgs;
@@ -30,7 +30,7 @@ impl Tool for ExecuteBashCommandTool {
 
     async fn definition(&self, _prompt: String) -> ToolDefinition {
         ToolDefinition {
-            name: "execute_bash_command".to_string(),
+            name: "exec_cmd".to_string(),
             description: "Execute a bash command and return the output. Use with caution as this can modify the system.".to_string(),
             parameters: serde_json::json!({
                 "type": "object",
@@ -89,7 +89,7 @@ impl WrappedExecuteBashCommandTool {
 }
 
 impl Tool for WrappedExecuteBashCommandTool {
-    const NAME: &'static str = "execute_bash_command";
+    const NAME: &'static str = "exec_cmd";
 
     type Error = FileToolError;
     type Args = <ExecuteBashCommandTool as Tool>::Args;
