@@ -1,4 +1,5 @@
-<a href="https://crates.io/crates/kota"><img src="https://img.shields.io/crates/v/kota.svg?color=dca282" /></a>  
+<a href="https://docs.rs/kota/latest/kota"><img src="https://img.shields.io/badge/docs-API Reference-dca282.svg" /></a> 
+<a href="https://crates.io/crates/kota"><img src="https://img.shields.io/crates/v/kota.svg?color=dca282" /></a>  &nbsp;
 # Kota
 A lightweight AI code agent in Rust:  
 
@@ -78,21 +79,16 @@ Kota supports intelligent tab completion for commands:
 
 Kota comes with a comprehensive set of file system and development tools:
 
-### File Operations
-- **`read_file`** - Read the contents of a file from the filesystem
-- **`write_file`** - Write content to a file, creating it if it doesn't exist or overwriting completely
-- **`edit_file`** - Apply unified diff patches to files for targeted changes
-- **`delete_file`** - Delete a file from the filesystem
-
-### Directory Operations
-- **`make_dir`** - Create directories and all necessary parent directories
-- **`scan_codebase`** - Scan and display the structure of a codebase directory tree
-
-### Search Operations
-- **`grep_find`** - Search for text patterns in files using regular expressions with recursive directory traversal
-
-### System Operations
-- **`exec_cmd`** - Execute bash/cmd commands and return output (use with caution)
+| Category | Tool | Description |
+|----------|------|-------------|
+| **File Operations** | `read_file` | Read the contents of a file from the filesystem |
+| | `write_file` | Write content to a file, creating it if it doesn't exist or overwriting completely |
+| | `edit_file` | Apply unified diff patches to files for targeted changes |
+| | `delete_file` | Delete a file from the filesystem |
+| **Directory Operations** | `make_dir` | Create directories and all necessary parent directories |
+| | `scan_codebase` | Scan and display the structure of a codebase directory tree |
+| **Search Operations** | `grep_find` | Search for text patterns in files using regular expressions with recursive directory traversal |
+| **System Operations** | `exec_cmd` | Execute bash/cmd commands and return output (use with caution) |
 
 Each tool provides detailed feedback during execution and handles common error cases like permission issues and missing files.
 
