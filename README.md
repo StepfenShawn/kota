@@ -1,3 +1,4 @@
+<a href="https://crates.io/crates/kota"><img src="https://img.shields.io/crates/v/kota.svg?color=dca282" /></a>  
 # Kota
 A lightweight AI code agent in Rust:  
 
@@ -23,11 +24,15 @@ Before running Kota, you need to create a `.env` file with your API configuratio
    - `API_KEY`: Your LLM provider API key
    - `MODEL_NAME`: The model to use (see supported models below)
 
-### Running Kota
-
-```bash
-cargo run -r
+## Install
 ```
+cargo install kota
+```
+and then start it by:  
+```
+kota
+```
+enjoy it!
 
 ## Supported Models
 
