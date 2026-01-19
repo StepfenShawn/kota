@@ -135,20 +135,12 @@ impl AgentBuilder {
 
             // DeepSeek models
             name if name.starts_with("deepseek-") => Ok(Provider::DeepSeek),
+            "ollama" | "local" => Ok(Provider::Ollama),
 
-            _ => {
-                // 默认根据常见模型名称判断
-                match model_name {
-                    "gpt-4o" | "gpt-4" | "gpt-3.5-turbo" | "o1-preview" | "o1-mini" => {
-                        Ok(Provider::OpenAI)
-                    }
-                    "ollama" | "local" => Ok(Provider::Ollama),
-                    _ => Err(anyhow::anyhow!(
-                        "Unknown model: {}. Please specify a supported model.",
-                        model_name
-                    )),
-                }
-            }
+            _ => Err(anyhow::anyhow!(
+                "Unknown model: {}. Please specify a supported model.",
+                model_name
+            )),
         }
     }
 
