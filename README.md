@@ -75,6 +75,9 @@ Kota supports intelligent tab completion for commands:
 ❯ /hi<Tab>       # Completes to /history
 ```
 
+## Current architecture of Kota
+![architecture](assert/architecture.png)
+
 ## Available Tools
 
 Kota comes with a comprehensive set of file system and development tools:
