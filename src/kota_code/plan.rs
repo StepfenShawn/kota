@@ -72,7 +72,7 @@ impl Plan {
 
     pub fn format(&self) -> String {
         let mut output = format!("📋 Plan: {}\n\n", self.title);
-        
+
         for task in &self.tasks {
             let status_icon = match task.status {
                 TaskStatus::Pending => "⏳",
@@ -80,14 +80,17 @@ impl Plan {
                 TaskStatus::Completed => "✅",
                 TaskStatus::Blocked => "🚫",
             };
-            
-            output.push_str(&format!("{} [{}] {}\n", status_icon, task.id, task.description));
-            
+
+            output.push_str(&format!(
+                "{} [{}] {}\n",
+                status_icon, task.id, task.description
+            ));
+
             if !task.dependencies.is_empty() {
                 output.push_str(&format!("   Dependencies: {:?}\n", task.dependencies));
             }
         }
-        
+
         let next_tasks = self.get_next_tasks();
         if !next_tasks.is_empty() {
             output.push_str("\n🎯 Next available tasks:\n");
@@ -95,7 +98,7 @@ impl Plan {
                 output.push_str(&format!("   • [{}] {}\n", task.id, task.description));
             }
         }
-        
+
         output
     }
 }

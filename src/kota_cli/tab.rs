@@ -1,3 +1,4 @@
+use colored::*;
 use rustyline::completion::{Completer, FilenameCompleter, Pair};
 use rustyline::error::ReadlineError;
 use rustyline::highlight::{Highlighter, MatchingBracketHighlighter};
@@ -6,7 +7,6 @@ use rustyline::validate::{self, MatchingBracketValidator, Validator};
 use rustyline::{Context, Helper};
 use std::borrow::Cow::{self, Borrowed, Owned};
 use std::collections::HashSet;
-use colored::*;
 
 pub struct KotaHelper {
     completer: FilenameCompleter,

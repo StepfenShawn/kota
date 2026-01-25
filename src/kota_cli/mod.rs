@@ -1,9 +1,8 @@
-use kota::kota_code::agent::AgentType;
-use kota::kota_code::context::ContextManager;
-use kota::kota_code::skills::SkillManager;
 use anyhow::Result;
 use colored::*;
-use names::Generator;
+use kota::kota_code::agent::{AgentBuilder, AgentInstance};
+use kota::kota_code::context::ContextManager;
+use kota::kota_code::skills::SkillManager;
 use rustyline::error::ReadlineError;
 use rustyline::Editor;
 
@@ -24,12 +23,10 @@ const LOGO: &str = r#"
 "#;
 
 pub struct KotaCli {
-    pub api_key: String,
+    pub agent_instance: AgentInstance,
     pub api_base: String,
     pub model_name: String,
-    pub agent: AgentType,
-    pub context: ContextManager,
-    pub skill_manager: SkillManager,
+    pub api_key: String,
 }
 
 impl KotaCli {
@@ -37,34 +34,19 @@ impl KotaCli {
         api_key: String,
         api_base: String,
         model_name: String,
-        agent: AgentType,
+        context: ContextManager,
+        skill_manager: SkillManager,
     ) -> Result<Self> {
-        let session_id = {
-            let mut generator = Generator::default();
-            generator
-                .next()
-                .unwrap_or_else(|| "unknown-session".to_string())
-        };
-
-        println!(
-            "{} {}",
-            "🎯 Session ID:".bright_cyan(),
-            session_id.bright_yellow()
-        );
-
-        // 创建上下文管理器，使用随机生成的session_id
-        let context = ContextManager::new("./.chat_sessions", session_id)?.with_max_messages(100);
-        
-        // 创建技能管理器
-        let skill_manager = SkillManager::new();
+        let agent_instance = AgentBuilder::new(api_key.clone(), model_name.clone())?
+            .with_context(context)
+            .with_skill_manager(skill_manager)
+            .build()?;
 
         Ok(Self {
-            api_key,
+            agent_instance,
             api_base,
             model_name,
-            agent,
-            context,
-            skill_manager,
+            api_key,
         })
     }
 

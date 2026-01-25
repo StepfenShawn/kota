@@ -125,12 +125,15 @@ impl Tool for UpdatePlanTool {
                         plan: Some(plan.format()),
                     })
                 } else {
-                    Err(FileToolError::InvalidInput("No active plan. Create one first.".to_string()))
+                    Err(FileToolError::InvalidInput(
+                        "No active plan. Create one first.".to_string(),
+                    ))
                 }
             }
             UpdatePlanArgs::UpdateStatus { task_id, status } => {
-                let status_enum = Self::parse_status(&status)
-                    .ok_or_else(|| FileToolError::InvalidInput(format!("Invalid status: {}", status)))?;
+                let status_enum = Self::parse_status(&status).ok_or_else(|| {
+                    FileToolError::InvalidInput(format!("Invalid status: {}", status))
+                })?;
 
                 let success = self.manager.update_plan(|plan| {
                     plan.update_status(task_id, status_enum);
@@ -144,7 +147,9 @@ impl Tool for UpdatePlanTool {
                         plan: Some(plan.format()),
                     })
                 } else {
-                    Err(FileToolError::InvalidInput("No active plan or task not found.".to_string()))
+                    Err(FileToolError::InvalidInput(
+                        "No active plan or task not found.".to_string(),
+                    ))
                 }
             }
             UpdatePlanArgs::Show => {

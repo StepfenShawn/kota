@@ -1,8 +1,3 @@
-// Test modules for all tools
-pub mod test_edit_file;
-pub mod test_read_file;
-pub mod test_write_file;
-
 // Common test utilities
 use std::fs;
 use std::path::Path;
@@ -19,3 +14,11 @@ pub fn create_test_file(dir: &Path, filename: &str, content: &str) -> String {
     fs::write(&file_path, content).expect("Failed to write test file");
     file_path.to_string_lossy().to_string()
 }
+
+// Test modules for all tools
+#[path = "tools/test_edit_file.rs"]
+mod test_edit_file;
+#[path = "tools/test_read_file.rs"]
+mod test_read_file;
+#[path = "tools/test_write_file.rs"]
+mod test_write_file;

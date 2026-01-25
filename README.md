@@ -1,9 +1,22 @@
 <a href="https://docs.rs/kota/latest/kota"><img src="https://img.shields.io/badge/docs-API Reference-dca282.svg" /></a> 
 <a href="https://crates.io/crates/kota"><img src="https://img.shields.io/crates/v/kota.svg?color=dca282" /></a>  &nbsp;
 # Kota
-A lightweight AI code agent in Rust:  
+A lightweight, highly extensible ai code agent, built in Rust:    
 
 ![kota_screenshot](assert/screenshort.jpg)
+
+# Why Kota?
+
+Kota is designed with the philosophy of **vim** - lightweight, highly extensible, and simple to configure. Just as vim became the go-to editor for developers who value efficiency and customization, Kota aims to be the AI code agent that gets out of your way while giving you full control.
+
+**Core Principles:**
+
+- **Lightweight** - Minimal dependencies, fast startup, low resource usage. Built in Rust for performance and reliability.
+- **Highly Extensible** - Skills system, custom tools, hooks, and plugin architecture. Extend Kota to fit your workflow, not the other way around.
+- **Simple Configuration** - Plain text config files, straightforward API. No complex setup, no bloated frameworks.
+- **Practical** - Focus on real development tasks: code review, refactoring, debugging, documentation. Tools that actually help you code.
+
+Whether you use it as a CLI tool or integrate it as a library into your own projects, Kota gives you the power to build AI-assisted workflows that match your needs - without the overhead.
 
 ## Setup
 
@@ -55,23 +68,33 @@ use anyhow::Result;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    // Create an agent
-    let agent = AgentBuilder::new(
+    // Create context manager for conversation history
+    let context = ContextManager::new(".chat_sessions", "my-session".to_string())?;
+
+    // Create a code agent instance with context
+    let mut agent = AgentBuilder::new(
         "your-api-key".to_string(),
         "gpt-4".to_string()
-    )?.build()?;
+    )?
+    .with_context(context)
+    .build()?;
 
-    // Create context manager for conversation history
-    let mut context = ContextManager::new(".chat_sessions", "my-session".to_string())?;
+    // Simple chat with automatic context management
+    let response = agent.chat("Hello! Can you help me with Rust?").await?;
+    println!("Tokens used: {}", response.usage().total_tokens);
 
-    // Use the agent...
+    // Continue conversation (context is automatically maintained)
+    let response = agent.chat("Can you give me an example?").await?;
+    println!("Tokens used: {}", response.usage().total_tokens);
+
     Ok(())
 }
 ```
 
 ### Library Features
 
-- **Agent Builder**: Create customized AI agents with different LLM providers
+- **Agent Builder**: Create customized AI code agents with different LLM providers
+- **Agent Instance**: Unified structure containing agent, context manager, and skill manager
 - **Context Management**: Persistent conversation history with session support
 - **Plan Management**: Structured task execution with dependencies
 - **Skills System**: Specialized agent behaviors for different tasks

@@ -7,21 +7,29 @@
 //! ## Quick Start
 //!
 //! ```rust,no_run
-//! use kota::kota_code::{AgentBuilder, ContextManager};
+//! use kota::kota_code::{AgentBuilder, ContextManager, SkillManager};
 //! use anyhow::Result;
-//!
+
 //! #[tokio::main]
 //! async fn main() -> Result<()> {
-//!     // Create an agent
-//!     let agent = AgentBuilder::new(
+//!     // Create context and skill managers
+//!     let context = ContextManager::new(".chat_sessions", "my-session".to_string())?;
+//!     let skill_manager = SkillManager::new();
+
+//!     // Create an agent instance with context and skills
+//!     let agent_instance = AgentBuilder::new(
 //!         "your-api-key".to_string(),
 //!         "gpt-4".to_string()
-//!     )?.build()?;
-//!
-//!     // Create context manager for conversation history
-//!     let mut context = ContextManager::new(".chat_sessions", "my-session".to_string())?;
-//!
-//!     // Use the agent...
+//!     )?
+//!     .with_context(context)
+//!     .with_skill_manager(skill_manager)
+//!     .build()?;
+
+//!     // Access the agent, context, and skill manager
+//!     // agent_instance.agent
+//!     // agent_instance.context()
+//!     // agent_instance.skill_manager()
+
 //!     Ok(())
 //! }
 //! ```
@@ -45,7 +53,7 @@ pub mod skills;
 pub mod tools;
 
 // Re-export commonly used types for convenience
-pub use agent::{create_agent, AgentBuilder, AgentType, Provider};
+pub use agent::{create_agent, AgentBuilder, AgentInstance, AgentType, Provider};
 pub use context::{ContextManager, SerializableMessage, SessionMetadata};
 pub use hooks::SessionIdHook;
 pub use plan::{Plan, PlanManager, Task, TaskStatus};
@@ -58,7 +66,7 @@ pub use tools::{
 
 /// Prelude module for convenient imports
 pub mod prelude {
-    pub use super::agent::{create_agent, AgentBuilder, AgentType, Provider};
+    pub use super::agent::{create_agent, AgentBuilder, AgentInstance, AgentType, Provider};
     pub use super::context::{ContextManager, SerializableMessage, SessionMetadata};
     pub use super::hooks::SessionIdHook;
     pub use super::plan::{Plan, PlanManager, Task, TaskStatus};

@@ -1,11 +1,6 @@
-use kota::kota_code::agent::AgentType;
-use kota::kota_code::context::{ContextManager, SerializableMessage};
-use kota::kota_code::hooks::SessionIdHook;
 use anyhow::Result;
 use colored::*;
-use rig::agent::stream_to_stdout;
-use rig::completion::Message;
-use rig::streaming::StreamingPrompt;
+use kota::kota_code::context::{ContextManager, SerializableMessage};
 
 use super::KotaCli;
 
@@ -54,77 +49,15 @@ impl KotaCli {
                 println!("{} Type /help for available commands", "💡".bright_blue());
             }
             _ => {
-                // 添加用户消息到上下文
-                self.context.add_message(Message::user(input));
-
                 println!("{}", "🧠 Thinking...".yellow());
                 println!("{}", "● kota:".blue());
 
-                // 创建会话钩子
-                let hook = SessionIdHook::new(self.context.session_id().to_string());
-
-                let response_result = match &self.agent {
-                    AgentType::OpenAI(agent) => {
-                        let mut stream = agent
-                            .stream_prompt(input)
-                            .with_hook(hook.clone())
-                            .multi_turn(20)
-                            .with_history(self.context.get_messages().to_vec())
-                            .await;
-                        stream_to_stdout(&mut stream).await
-                    }
-                    AgentType::Anthropic(agent) => {
-                        let mut stream = agent
-                            .stream_prompt(input)
-                            .with_hook(hook.clone())
-                            .multi_turn(20)
-                            .with_history(self.context.get_messages().to_vec())
-                            .await;
-                        stream_to_stdout(&mut stream).await
-                    }
-                    AgentType::Cohere(agent) => {
-                        let mut stream = agent
-                            .stream_prompt(input)
-                            .with_hook(hook.clone())
-                            .multi_turn(20)
-                            .with_history(self.context.get_messages().to_vec())
-                            .await;
-                        stream_to_stdout(&mut stream).await
-                    }
-                    AgentType::DeepSeek(agent) => {
-                        let mut stream = agent
-                            .stream_prompt(input)
-                            .with_hook(hook.clone())
-                            .multi_turn(20)
-                            .with_history(self.context.get_messages().to_vec())
-                            .await;
-                        stream_to_stdout(&mut stream).await
-                    }
-                    AgentType::Ollama(agent) => {
-                        let mut stream = agent
-                            .stream_prompt(input)
-                            .with_hook(hook.clone())
-                            .multi_turn(20)
-                            .with_history(self.context.get_messages().to_vec())
-                            .await;
-                        stream_to_stdout(&mut stream).await
-                    }
-                };
+                let response_result = self.agent_instance.chat(input).await;
 
                 println!();
 
                 match response_result {
                     Ok(resp) => {
-                        // 获取响应内容并添加到上下文
-                        let response_content = resp.response();
-                        self.context
-                            .add_message(Message::assistant(response_content));
-
-                        // 自动保存上下文（包含用户消息和助手响应）
-                        if let Err(e) = self.context.save() {
-                            println!("{} Failed to save context: {}", "⚠️".yellow(), e);
-                        }
-
                         println!(
                             "{} Total tokens used: {}",
                             "📊".bright_blue(),
@@ -175,7 +108,10 @@ impl KotaCli {
             "  {} - Activate a specific skill",
             "/skill <name>".bright_green()
         );
-        println!("  {} - Deactivate current skill", "/skill-off".bright_green());
+        println!(
+            "  {} - Deactivate current skill",
+            "/skill-off".bright_green()
+        );
         println!(
             "  {} - Load specific session",
             "/load <session_id>".bright_green()
@@ -200,21 +136,22 @@ impl KotaCli {
     }
 
     fn show_history(&self) -> Result<()> {
-        let messages = self.context.get_messages();
+        let context = self
+            .agent_instance
+            .context()
+            .expect("Context manager not initialized");
+        let messages = context.get_messages();
         if messages.is_empty() {
             println!(
                 "{} No conversation history in current session",
                 "📝".bright_blue()
             );
-            println!(
-                "  Current session: {}",
-                self.context.session_id().bright_white()
-            );
+            println!("  Current session: {}", context.session_id().bright_white());
         } else {
             println!(
                 "{} Conversation History (Session: {})",
                 "📝".bright_blue(),
-                self.context.session_id().bright_white()
+                context.session_id().bright_white()
             );
             println!();
 
@@ -252,7 +189,11 @@ impl KotaCli {
     }
 
     fn list_sessions(&self) -> Result<()> {
-        match self.context.list_sessions() {
+        let context = self
+            .agent_instance
+            .context()
+            .expect("Context manager not initialized");
+        match context.list_sessions() {
             Ok(sessions) => {
                 if sessions.is_empty() {
                     println!("{} No saved sessions found", "📁".bright_blue());
@@ -261,7 +202,7 @@ impl KotaCli {
                     println!();
 
                     for (i, session) in sessions.iter().enumerate() {
-                        let current_marker = if session.session_id == self.context.session_id() {
+                        let current_marker = if session.session_id == context.session_id() {
                             " (current)".bright_green()
                         } else {
                             "".normal()
@@ -293,8 +234,13 @@ impl KotaCli {
     }
 
     fn load_session(&mut self, session_id: &str) -> Result<()> {
+        let context = self
+            .agent_instance
+            .context_mut()
+            .expect("Context manager not initialized");
+
         // 保存当前会话
-        if let Err(e) = self.context.save() {
+        if let Err(e) = context.save() {
             println!(
                 "{} Warning: Failed to save current session: {}",
                 "⚠️".yellow(),
@@ -303,9 +249,9 @@ impl KotaCli {
         }
 
         // 切换到新会话
-        self.context.switch_session(session_id.to_string());
+        context.switch_session(session_id.to_string());
 
-        match self.context.load() {
+        match context.load() {
             Ok(true) => {
                 println!(
                     "{} Successfully loaded session: {}",
@@ -314,11 +260,7 @@ impl KotaCli {
                 );
                 println!(
                     "   Messages loaded: {}",
-                    self.context
-                        .get_messages()
-                        .len()
-                        .to_string()
-                        .bright_yellow()
+                    context.get_messages().len().to_string().bright_yellow()
                 );
             }
             Ok(false) => {
@@ -342,7 +284,12 @@ impl KotaCli {
     }
 
     fn delete_session(&mut self, session_id: &str) -> Result<()> {
-        if session_id == self.context.session_id() {
+        let context = self
+            .agent_instance
+            .context()
+            .expect("Context manager not initialized");
+
+        if session_id == context.session_id() {
             println!("{} Cannot delete current active session", "❌".red());
             println!("   Switch to another session first using '/load <session_id>'",);
             return Ok(());
@@ -380,56 +327,78 @@ impl KotaCli {
     }
 
     fn list_skills(&mut self) -> Result<()> {
-        let skills = self.skill_manager.list_skills();
-        
+        let skill_manager = self
+            .agent_instance
+            .skill_manager()
+            .expect("Skill manager not initialized");
+        let skills = skill_manager.list_skills();
+
         if skills.is_empty() {
             println!("{} No skills available", "🎯".bright_blue());
         } else {
             println!("{} Available Skills:", "🎯".bright_blue());
             println!();
-            
+
             for (i, skill) in skills.iter().enumerate() {
-                let active_marker = if self.skill_manager.get_active_skill()
+                let active_marker = if skill_manager
+                    .get_active_skill()
                     .map(|s| s.name == skill.name)
-                    .unwrap_or(false) {
+                    .unwrap_or(false)
+                {
                     " (active)".bright_green()
                 } else {
                     "".normal()
                 };
-                
+
                 println!(
                     "{}. {}{}",
-                    ((i + 1) as i32).to_string().bright_white(),
+                    (i + 1).to_string().bright_white(),
                     skill.name.bright_cyan(),
                     active_marker
                 );
                 println!("   {}", skill.description.dimmed());
-                println!("   Tools: {}", skill.enabled_tools.join(", ").bright_yellow());
+                println!(
+                    "   Tools: {}",
+                    skill.enabled_tools.join(", ").bright_yellow()
+                );
                 println!();
             }
-            
-            println!("{} Use '/skill <name>' to activate a skill", "💡".bright_blue());
+
+            println!(
+                "{} Use '/skill <name>' to activate a skill",
+                "💡".bright_blue()
+            );
         }
         println!();
         Ok(())
     }
 
     fn activate_skill(&mut self, skill_name: &str) -> Result<()> {
-        match self.skill_manager.activate_skill(skill_name) {
+        let skill_manager = self
+            .agent_instance
+            .skill_manager_mut()
+            .expect("Skill manager not initialized");
+        match skill_manager.activate_skill(skill_name) {
             Ok(_) => {
                 println!(
                     "{} Activated skill: {}",
                     "✅".bright_green(),
                     skill_name.bright_cyan()
                 );
-                if let Some(skill) = self.skill_manager.get_skill(skill_name) {
+                if let Some(skill) = skill_manager.get_skill(skill_name) {
                     println!("   {}", skill.description.dimmed());
-                    println!("   Available tools: {}", skill.enabled_tools.join(", ").bright_yellow());
+                    println!(
+                        "   Available tools: {}",
+                        skill.enabled_tools.join(", ").bright_yellow()
+                    );
                 }
             }
             Err(e) => {
                 println!("{} Failed to activate skill: {}", "❌".red(), e);
-                println!("{} Use '/skills' to see available skills", "💡".bright_blue());
+                println!(
+                    "{} Use '/skills' to see available skills",
+                    "💡".bright_blue()
+                );
             }
         }
         println!();
@@ -437,7 +406,11 @@ impl KotaCli {
     }
 
     fn deactivate_skill(&mut self) -> Result<()> {
-        self.skill_manager.deactivate_skill();
+        let skill_manager = self
+            .agent_instance
+            .skill_manager_mut()
+            .expect("Skill manager not initialized");
+        skill_manager.deactivate_skill();
         println!("{} Skill deactivated", "✅".bright_green());
         println!();
         Ok(())
