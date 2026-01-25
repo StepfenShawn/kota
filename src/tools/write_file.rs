@@ -19,7 +19,7 @@ pub struct WriteFileOutput {
     pub message: String,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Default)]
 pub struct WriteFileTool;
 
 impl Tool for WriteFileTool {
@@ -85,7 +85,7 @@ impl Tool for WriteFileTool {
         }
     }
 }
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Default)]
 pub struct WrappedWriteFileTool {
     inner: WriteFileTool,
 }
@@ -110,8 +110,7 @@ impl Tool for WrappedWriteFileTool {
     }
 
     async fn call(&self, args: Self::Args) -> Result<Self::Output, Self::Error> {
-        println!();
-        println!("{} {}({})", "●".bright_green(), "Write", args.file_path);
+        println!("\n{} Write({})", "●".bright_green(), args.file_path);
 
         // Store line count before moving args
         let line_count = args.content.lines().count();

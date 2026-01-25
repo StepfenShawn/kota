@@ -33,7 +33,7 @@ pub struct GrepSearchOutput {
     pub message: String,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Default)]
 pub struct GrepSearchTool;
 
 impl Tool for GrepSearchTool {
@@ -85,7 +85,7 @@ impl Tool for GrepSearchTool {
                 Err(_) => continue, // Skip entries we can't access
             };
 
-            if entry.file_type().map_or(false, |ft| ft.is_file()) {
+            if entry.file_type().is_some_and(|ft| ft.is_file()) {
                 files_searched += 1;
 
                 if let Ok(content) = fs::read_to_string(entry.path()) {
@@ -127,7 +127,7 @@ impl Tool for GrepSearchTool {
 }
 
 // Wrapper with visual feedback
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Default)]
 pub struct WrappedGrepSearchTool {
     inner: GrepSearchTool,
 }
@@ -151,7 +151,7 @@ impl Tool for WrappedGrepSearchTool {
     }
 
     async fn call(&self, args: Self::Args) -> Result<Self::Output, Self::Error> {
-        println!("{} {}({})", "●".bright_green(), "Search", args.query);
+        println!("\n{} Search({})", "●".bright_green(), args.query);
 
         let result = self.inner.call(args).await;
 

@@ -18,7 +18,7 @@ pub struct ExecuteBashCommandOutput {
     pub exit_code: Option<i32>,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Default)]
 pub struct ExecuteBashCommandTool;
 
 impl Tool for ExecuteBashCommandTool {
@@ -75,7 +75,7 @@ impl Tool for ExecuteBashCommandTool {
     }
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Default)]
 pub struct WrappedExecuteBashCommandTool {
     inner: ExecuteBashCommandTool,
 }
@@ -100,8 +100,7 @@ impl Tool for WrappedExecuteBashCommandTool {
     }
 
     async fn call(&self, args: Self::Args) -> Result<Self::Output, Self::Error> {
-        println!();
-        println!("{} {}({})", "●".bright_green(), "Exec", args.command);
+        println!("\n{} Exec({})", "●".bright_green(), args.command);
 
         let result = self.inner.call(args).await;
 

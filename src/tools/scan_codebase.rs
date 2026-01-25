@@ -18,12 +18,11 @@ pub struct ScanCodebaseOutput {
     pub total_directories: usize,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Default)]
 pub struct ScanCodebaseTool;
 
 impl ScanCodebaseTool {
     fn scan_directory(
-        &self,
         path: &Path,
         prefix: &str,
         max_depth: usize,
@@ -72,7 +71,7 @@ impl ScanCodebaseTool {
                 result.push_str(&format!("{}{}{}\n", prefix, current_prefix, file_name_str));
                 dir_count += 1;
 
-                let (sub_result, sub_files, sub_dirs) = self.scan_directory(
+                let (sub_result, sub_files, sub_dirs) = Self::scan_directory(
                     &entry.path(),
                     &format!("{}{}", prefix, next_prefix),
                     max_depth,
@@ -136,7 +135,7 @@ impl Tool for ScanCodebaseTool {
                 .unwrap_or_else(|| std::ffi::OsStr::new(root_path))
                 .to_string_lossy()
         );
-        let (tree_result, file_count, dir_count) = self.scan_directory(path, "", 5, 0)?;
+        let (tree_result, file_count, dir_count) = Self::scan_directory(path, "", 5, 0)?;
         structure.push_str(&tree_result);
 
         Ok(ScanCodebaseOutput {
@@ -148,7 +147,7 @@ impl Tool for ScanCodebaseTool {
     }
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Default)]
 pub struct WrappedScanCodebaseTool {
     inner: ScanCodebaseTool,
 }
@@ -173,8 +172,7 @@ impl Tool for WrappedScanCodebaseTool {
     }
 
     async fn call(&self, args: Self::Args) -> Result<Self::Output, Self::Error> {
-        println!();
-        println!("{} {}({})", "●".bright_green(), "Scan", args.root_path);
+        println!("\n{} Scan({})", "●".bright_green(), args.root_path);
 
         let result = self.inner.call(args).await;
 

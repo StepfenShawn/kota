@@ -113,7 +113,7 @@ impl PlanManager {
     }
 
     pub fn get_plan(&self) -> Option<Plan> {
-        self.current_plan.lock().unwrap().clone()
+        self.current_plan.lock().ok()?.clone()
     }
 
     pub fn set_plan(&self, plan: Plan) {

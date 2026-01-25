@@ -17,7 +17,7 @@ pub struct DeleteFileOutput {
     pub message: String,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Default)]
 pub struct DeleteFileTool;
 
 impl Tool for DeleteFileTool {
@@ -74,7 +74,7 @@ impl Tool for DeleteFileTool {
         }
     }
 }
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Default)]
 pub struct WrappedDeleteFileTool {
     inner: DeleteFileTool,
 }
@@ -99,8 +99,7 @@ impl Tool for WrappedDeleteFileTool {
     }
 
     async fn call(&self, args: Self::Args) -> Result<Self::Output, Self::Error> {
-        println!();
-        println!("{} {}({})", "●".bright_green(), "Delete", args.file_path);
+        println!("\n{} Delete({})", "●".bright_green(), args.file_path);
 
         let result = self.inner.call(args).await;
 

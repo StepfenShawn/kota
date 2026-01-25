@@ -18,7 +18,7 @@ pub struct CreateDirectoryOutput {
     pub created_parents: bool,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Default)]
 pub struct CreateDirectoryTool;
 
 impl Tool for CreateDirectoryTool {
@@ -67,7 +67,7 @@ impl Tool for CreateDirectoryTool {
         }
 
         // Check if we need to create parent directories
-        let needs_parents = path.parent().map_or(false, |parent| !parent.exists());
+        let needs_parents = path.parent().is_some_and(|parent| !parent.exists());
 
         // Create the directory and all parent directories
         match fs::create_dir_all(dir_path) {
@@ -94,7 +94,7 @@ impl Tool for CreateDirectoryTool {
     }
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Default)]
 pub struct WrappedCreateDirectoryTool {
     inner: CreateDirectoryTool,
 }
@@ -119,8 +119,7 @@ impl Tool for WrappedCreateDirectoryTool {
     }
 
     async fn call(&self, args: Self::Args) -> Result<Self::Output, Self::Error> {
-        println!();
-        println!("{} {}({})", "●".bright_green(), "CreateDir", args.dir_path);
+        println!("\n{} CreateDir({})", "●".bright_green(), args.dir_path);
 
         let result = self.inner.call(args).await;
 

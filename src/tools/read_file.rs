@@ -19,7 +19,7 @@ pub struct ReadFileOutput {
     pub message: String,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Default)]
 pub struct ReadFileTool;
 
 impl Tool for ReadFileTool {
@@ -88,7 +88,7 @@ impl Tool for ReadFileTool {
     }
 }
 // 在工具调用前后显示信息
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Default)]
 pub struct WrappedReadFileTool {
     inner: ReadFileTool,
 }
@@ -113,8 +113,7 @@ impl Tool for WrappedReadFileTool {
     }
 
     async fn call(&self, args: Self::Args) -> Result<Self::Output, Self::Error> {
-        println!();
-        println!("{} {}({})", "●".bright_green(), "Read", args.file_path);
+        println!("\n{} Read({})", "●".bright_green(), args.file_path);
 
         let result = self.inner.call(args).await;
 

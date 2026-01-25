@@ -21,7 +21,7 @@ pub struct EditFileOutput {
     pub message: String,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Default)]
 pub struct EditFileTool;
 
 impl Tool for EditFileTool {
@@ -123,7 +123,7 @@ impl Tool for EditFileTool {
     }
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Default)]
 pub struct WrappedEditFileTool {
     inner: EditFileTool,
 }
@@ -148,8 +148,7 @@ impl Tool for WrappedEditFileTool {
     }
 
     async fn call(&self, args: Self::Args) -> Result<Self::Output, Self::Error> {
-        println!();
-        println!("{} {}({})", "●".bright_green(), "Edit", args.file_path);
+        println!("\n{} Edit({})", "●".bright_green(), args.file_path);
 
         let result = self.inner.call(args).await;
 

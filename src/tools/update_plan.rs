@@ -203,8 +203,7 @@ impl Tool for WrappedUpdatePlanTool {
             UpdatePlanArgs::Clear => "Clear Plan",
         };
 
-        println!();
-        println!("{} {}", "●".bright_blue(), action_name);
+        println!("\n{} {}", "●".bright_blue(), action_name);
 
         let result = self.inner.as_ref().unwrap().call(args).await;
 
