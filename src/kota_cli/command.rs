@@ -60,29 +60,7 @@ impl KotaCli {
                 println!("{} Type /help for available commands", "💡".bright_blue());
             }
             _ => {
-                println!("{}", "🧠 Thinking...".yellow());
-                println!("{}", "● kota:".blue());
-
-                let response_result = self.agent_instance.chat(input).await;
-
-                println!();
-
-                match response_result {
-                    Ok(resp) => {
-                        println!(
-                            "{} Total tokens used: {}",
-                            "📊".bright_blue(),
-                            resp.usage().total_tokens
-                        );
-                    }
-                    Err(e) => {
-                        println!("{} Failed to get AI response: {}", "❌".red(), e);
-                        println!(
-                            "{} Please check your API key and network connection",
-                            "💡".bright_blue()
-                        );
-                    }
-                }
+                self.handle_ai_chat(input).await?;
             }
         }
         println!(); // 添加空行分隔
@@ -453,32 +431,38 @@ impl KotaCli {
                 println!();
                 
                 // Send prompt to AI
-                println!("{}", "🧠 Thinking...".yellow());
-                println!("{}", "● kota:".blue());
-
-                let response_result = self.agent_instance.chat(&prompt).await;
-
-                println!();
-
-                match response_result {
-                    Ok(resp) => {
-                        println!(
-                            "{} Total tokens used: {}",
-                            "📊".bright_blue(),
-                            resp.usage().total_tokens
-                        );
-                    }
-                    Err(e) => {
-                        println!("{} Failed to get AI response: {}", "❌".red(), e);
-                        println!(
-                            "{} Please check your API key and network connection",
-                            "💡".bright_blue()
-                        );
-                    }
-                }
+                self.handle_ai_chat(&prompt).await?;
             }
             Err(e) => {
                 println!("{} Failed to execute command '{}': {}", "❌".red(), cmd_name, e);
+            }
+        }
+        
+        Ok(())
+    }
+
+    async fn handle_ai_chat(&mut self, input: &str) -> Result<()> {
+        println!("{}", "🧠 Thinking...".yellow());
+        println!("{}", "● kota:".blue());
+
+        let response_result = self.agent_instance.chat(input).await;
+
+        println!();
+
+        match response_result {
+            Ok(resp) => {
+                println!(
+                    "{} Total tokens used: {}",
+                    "📊".bright_blue(),
+                    resp.usage().total_tokens
+                );
+            }
+            Err(e) => {
+                println!("{} Failed to get AI response: {}", "❌".red(), e);
+                println!(
+                    "{} Please check your API key and network connection",
+                    "💡".bright_blue()
+                );
             }
         }
         
