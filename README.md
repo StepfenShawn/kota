@@ -24,7 +24,6 @@ Whether you use it as a CLI tool or integrate it as a library into your own proj
 |---------|------|--------|----------------|-------------|-------|
 | **Language** | Rust | Electron/TS | TypeScript | Proprietary | Rust |
 | **Extensibility** | ✅ Lua config + Custom tools | Limited | Plugin API | ❌ No | API only |
-| **CLI Support** | ✅ Full-featured | ❌ IDE only | ❌ IDE only | ❌ Web only | ✅ API |
 | **Library Usage** | ✅ Rust crate | ❌ No | ❌ No | ❌ No | ❌ No |
 | **Skills System** | ✅ Built-in | ❌ No | ❌ No | ✅ Built-in | ❌ No |
 | **Custom Commands** | ✅ Lua functions | ❌ No | ❌ No | ❌ No | ❌ No |
