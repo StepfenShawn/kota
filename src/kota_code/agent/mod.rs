@@ -1,7 +1,7 @@
-use anyhow::Result;
+use anyhow::{Ok, Result};
 use rig::{
     agent::Agent,
-    client::CompletionClient,
+    client::{CompletionClient, ProviderClient},
     providers::{
         anthropic, cohere,
         deepseek::{self, DEEPSEEK_CHAT},
@@ -409,7 +409,7 @@ impl AgentBuilder {
             Provider::Ollama => {
                 build_agent!(
                     ollama::Client::new(rig::client::Nothing),
-                    &self.model_name,
+                    self.model_name.strip_prefix("ollama-").unwrap(),
                     preamble,
                     self.tool_registry.take_all(),
                     Ollama
@@ -459,7 +459,9 @@ impl AgentBuilder {
 
             // DeepSeek models
             name if name.starts_with("deepseek-") => Ok(Provider::DeepSeek),
-            "ollama" | "local" => Ok(Provider::Ollama),
+            
+            // Models by ollama
+            name if name.starts_with("ollama-") => Ok(Provider::Ollama),
 
             _ => Err(anyhow::anyhow!(
                 "Unknown model: {}. Please specify a supported model.",
