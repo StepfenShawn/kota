@@ -27,7 +27,7 @@ Whether you use it as a CLI tool or integrate it as a library into your own proj
 | **Library Usage** | ✅ Rust crate | ❌ No | ❌ No | ❌ No | ❌ No |
 | **Skills System** | ✅ Built-in | ❌ No | ❌ No | ✅ Built-in | ❌ No |
 | **Custom Commands** | ✅ Lua functions | ❌ No | ❌ No | ❌ No | ❌ No |
-| **Multi-Model** | ✅ Multiple | ✅ Multiple | ❌ OpenAI only | ❌ Claude only | ❌ OpenAI only |
+| **Multi-Model** | ✅ Multiple | ✅ Multiple | ✅ Multiple | ❌ Claude only | ❌ OpenAI only |
 | **Configuration** | Simple Lua files | GUI settings | GUI settings | Web UI | API config |
 | **Learning Curve** | Low (vim-like) | Medium | Low | Low | High |
 
