@@ -1,7 +1,7 @@
 use super::create_temp_dir;
-use kota::kota_code::tools::write_file::{WriteFileArgs, WriteFileTool};
+use kota::kota_code::llm::Tool;
 use kota::kota_code::tools::FileToolError;
-use rig::tool::Tool;
+use kota::kota_code::tools::write_file::{WriteFileArgs, WriteFileTool};
 use std::fs;
 
 #[tokio::test]

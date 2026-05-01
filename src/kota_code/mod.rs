@@ -36,7 +36,7 @@
 //!
 //! ## Features
 //!
-//! - **Multiple LLM Providers**: OpenAI, Anthropic, DeepSeek, Cohere, Ollama
+//! - **OpenAI-Compatible API**: Works with OpenAI, DeepSeek, Ollama, and any OpenAI-format endpoint
 //! - **File Operations**: Read, write, edit, delete files with built-in tools
 //! - **Code Analysis**: Scan codebase, grep search, pattern matching
 //! - **Task Management**: Plan mode with task dependencies and status tracking
@@ -47,6 +47,7 @@
 // Core modules
 pub mod agent;
 pub mod context;
+pub mod llm;
 pub mod mcp;
 pub mod plan;
 pub mod runtime;
@@ -54,9 +55,10 @@ pub mod skills;
 pub mod tools;
 
 // Re-export commonly used types for convenience
-pub use agent::{create_agent, AgentBuilder, AgentInstance, AgentType, Provider};
+pub use agent::{AgentBuilder, AgentInstance, create_agent};
 pub use context::{ContextManager, SerializableMessage, SessionMetadata};
-pub use mcp::{client::McpClient, McpManager};
+pub use llm::{ChatResponse, Message, OpenAiClient, Tool, ToolDefinition, ToolDyn, Usage};
+pub use mcp::{McpManager, client::McpClient};
 pub use plan::{Plan, PlanManager, Task, TaskStatus};
 pub use runtime::{CommandDef, KotaConfig, SessionIdHook, ToolRegistry};
 pub use skills::{Skill, SkillManager};
@@ -68,9 +70,12 @@ pub use tools::{
 
 /// Prelude module for convenient imports
 pub mod prelude {
-    pub use super::agent::{create_agent, AgentBuilder, AgentInstance, AgentType, Provider};
+    pub use super::agent::{AgentBuilder, AgentInstance, create_agent};
     pub use super::context::{ContextManager, SerializableMessage, SessionMetadata};
-    pub use super::mcp::{client::McpClient, McpManager};
+    pub use super::llm::{
+        ChatResponse, Message, OpenAiClient, Tool, ToolDefinition, ToolDyn, Usage,
+    };
+    pub use super::mcp::{McpManager, client::McpClient};
     pub use super::plan::{Plan, PlanManager, Task, TaskStatus};
     pub use super::runtime::{CommandDef, KotaConfig, SessionIdHook, ToolRegistry};
     pub use super::skills::{Skill, SkillManager};

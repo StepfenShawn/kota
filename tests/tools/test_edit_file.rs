@@ -1,6 +1,6 @@
 use super::{create_temp_dir, create_test_file};
+use kota::kota_code::llm::Tool;
 use kota::kota_code::tools::edit_file::{EditFileArgs, EditFileTool};
-use rig::tool::Tool;
 use std::fs;
 
 #[tokio::test]

@@ -1,7 +1,7 @@
 use super::super::plan::{Plan, PlanManager, TaskStatus};
 use super::FileToolError;
+use crate::kota_code::llm::{Tool, ToolDefinition};
 use colored::*;
-use rig::{completion::ToolDefinition, tool::Tool};
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]

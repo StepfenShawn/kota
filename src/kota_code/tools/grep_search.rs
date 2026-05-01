@@ -1,8 +1,8 @@
 use super::FileToolError;
+use crate::kota_code::llm::{Tool, ToolDefinition};
 use colored::*;
 use ignore::WalkBuilder;
 use regex::Regex;
-use rig::{completion::ToolDefinition, tool::Tool};
 use serde::{Deserialize, Serialize};
 use std::fs;
 

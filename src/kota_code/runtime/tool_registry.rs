@@ -1,4 +1,4 @@
-use rig::tool::ToolDyn;
+use crate::kota_code::llm::ToolDyn;
 
 pub struct ToolRegistry {
     tools: Vec<Box<dyn ToolDyn>>,

@@ -2,8 +2,8 @@ use crate::kota_code::context::{ContextManager, SerializableMessage};
 use anyhow::Result;
 use colored::*;
 
-use super::command_registry::parse_command_input;
 use super::KotaCli;
+use super::command_registry::parse_command_input;
 
 impl KotaCli {
     pub async fn handle_command(&mut self, input: &str) -> Result<bool> {

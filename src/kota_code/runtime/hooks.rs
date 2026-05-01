@@ -1,7 +1,4 @@
-use rig::agent::StreamingPromptHook;
-use rig::completion::CompletionModel;
-
-/// Session-aware hook that logs tool calls and completions with session context
+/// Session-aware hook placeholder retained for API compatibility.
 #[derive(Clone)]
 pub struct SessionIdHook {
     pub session_id: String,
@@ -12,5 +9,3 @@ impl SessionIdHook {
         Self { session_id }
     }
 }
-
-impl<M: CompletionModel> StreamingPromptHook<M> for SessionIdHook {}

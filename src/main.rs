@@ -65,6 +65,7 @@ async fn main() -> Result<()> {
         config.api_key,
         config.api_base,
         config.model,
+        config.temperature,
         context,
         skill_manager,
         command_registry,

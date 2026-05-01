@@ -1,5 +1,5 @@
+use crate::kota_code::llm::{BoxFuture, ToolDefinition, ToolDyn, ToolError};
 use mlua::prelude::*;
-use rig::{completion::ToolDefinition, tool::ToolDyn};
 use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
 use std::sync::Arc;
@@ -11,7 +11,7 @@ pub enum DynToolError {
     InvalidInput(String),
 }
 
-/// Lua tool that wraps a Lua function and makes it callable as a rig Tool
+/// Lua tool that wraps a Lua function and makes it callable as an LLM tool
 #[derive(Clone)]
 pub struct LuaDynTool {
     name: String,
@@ -56,10 +56,7 @@ impl ToolDyn for LuaDynTool {
         self.name.clone()
     }
 
-    fn definition<'a>(
-        &'a self,
-        _prompt: String,
-    ) -> rig::wasm_compat::WasmBoxedFuture<'a, ToolDefinition> {
+    fn definition<'a>(&'a self, _prompt: String) -> BoxFuture<'a, ToolDefinition> {
         Box::pin(async move {
             ToolDefinition {
                 name: self.name.clone(),
@@ -69,51 +66,40 @@ impl ToolDyn for LuaDynTool {
         })
     }
 
-    fn call<'a>(
-        &'a self,
-        args: String,
-    ) -> rig::wasm_compat::WasmBoxedFuture<'a, Result<String, rig::tool::ToolError>> {
+    fn call<'a>(&'a self, args: String) -> BoxFuture<'a, Result<String, ToolError>> {
         Box::pin(async move {
             let lua = Lua::new();
 
             // Load the Lua function from bytecode
             let func: LuaFunction = lua.load(&*self.lua_code).into_function().map_err(|e| {
-                rig::tool::ToolError::ToolCallError(
-                    format!("Failed to load Lua bytecode: {}", e).into(),
-                )
+                ToolError::ToolCallError(format!("Failed to load Lua bytecode: {}", e).into())
             })?;
 
             // Parse JSON args
             let json_args: JsonValue = serde_json::from_str(&args).map_err(|e| {
-                rig::tool::ToolError::ToolCallError(format!("Failed to parse args: {}", e).into())
+                ToolError::ToolCallError(format!("Failed to parse args: {}", e).into())
             })?;
 
             // Convert JSON args to Lua value
             let lua_args = json_to_lua(&lua, &json_args).map_err(|e| {
-                rig::tool::ToolError::ToolCallError(
-                    format!("Failed to convert args to Lua: {}", e).into(),
-                )
+                ToolError::ToolCallError(format!("Failed to convert args to Lua: {}", e).into())
             })?;
 
             // Call the Lua function
             let result: LuaValue = func.call(lua_args).map_err(|e| {
-                rig::tool::ToolError::ToolCallError(
-                    format!("Lua function call failed: {}", e).into(),
-                )
+                ToolError::ToolCallError(format!("Lua function call failed: {}", e).into())
             })?;
 
             // Convert Lua result back to JSON
             let json_result = lua_to_json(&result).map_err(|e| {
-                rig::tool::ToolError::ToolCallError(
+                ToolError::ToolCallError(
                     format!("Failed to convert Lua result to JSON: {}", e).into(),
                 )
             })?;
 
             // Return as JSON string
             serde_json::to_string(&json_result).map_err(|e| {
-                rig::tool::ToolError::ToolCallError(
-                    format!("Failed to serialize result: {}", e).into(),
-                )
+                ToolError::ToolCallError(format!("Failed to serialize result: {}", e).into())
             })
         })
     }

@@ -1,7 +1,7 @@
 use super::FileToolError;
+use crate::kota_code::llm::{Tool, ToolDefinition};
 use colored::*;
-use patch_apply::{apply, Patch};
-use rig::{completion::ToolDefinition, tool::Tool};
+use patch_apply::{Patch, apply};
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;

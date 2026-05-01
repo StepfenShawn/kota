@@ -1,7 +1,7 @@
 use super::{create_temp_dir, create_test_file};
-use kota::kota_code::tools::read_file::{ReadFileArgs, ReadFileTool};
+use kota::kota_code::llm::Tool;
 use kota::kota_code::tools::FileToolError;
-use rig::tool::Tool;
+use kota::kota_code::tools::read_file::{ReadFileArgs, ReadFileTool};
 
 #[tokio::test]
 async fn test_read_existing_file() {

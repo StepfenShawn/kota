@@ -51,7 +51,9 @@ kota.setup({
     fs::write(&config_path, config_content).unwrap();
 
     // Set environment variable
-    std::env::set_var("TEST_API_KEY", "env-api-key-456");
+    unsafe {
+        std::env::set_var("TEST_API_KEY", "env-api-key-456");
+    }
 
     let config = KotaConfig::from_lua_file(&config_path).unwrap();
 
@@ -60,7 +62,9 @@ kota.setup({
     assert_eq!(config.temperature, Some(0.7));
 
     // Clean up env var
-    std::env::remove_var("TEST_API_KEY");
+    unsafe {
+        std::env::remove_var("TEST_API_KEY");
+    }
 }
 
 #[test]
@@ -74,10 +78,12 @@ fn test_missing_config_file() {
     let result = KotaConfig::load();
 
     assert!(result.is_err());
-    assert!(result
-        .unwrap_err()
-        .to_string()
-        .contains("Configuration file not found"));
+    assert!(
+        result
+            .unwrap_err()
+            .to_string()
+            .contains("Configuration file not found")
+    );
 
     // Restore original directory
     std::env::set_current_dir(original_dir).unwrap();

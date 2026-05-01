@@ -1,6 +1,6 @@
 use super::FileToolError;
+use crate::kota_code::llm::{Tool, ToolDefinition};
 use colored::*;
-use rig::{completion::ToolDefinition, tool::Tool};
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;

@@ -18,19 +18,6 @@ Kota is designed with the philosophy of **vim** - lightweight, highly extensible
 
 Whether you use it as a CLI tool or integrate it as a library into your own projects, Kota gives you the power to build AI-assisted workflows that match your needs - without the overhead.
 
-## Comparison with Other Code Agents
-
-| Feature | Kota | Cursor | GitHub Copilot | Claude Code | Codex |
-|---------|------|--------|----------------|-------------|-------|
-| **Language** | Rust | Electron/TS | TypeScript | Proprietary | Rust |
-| **Extensibility** | ✅ Lua config + Custom tools | Limited | Plugin API | ❌ No | API only |
-| **Library Usage** | ✅ Rust crate | ❌ No | ❌ No | ❌ No | ❌ No |
-| **Skills System** | ✅ Built-in | ❌ No | ❌ No | ✅ Built-in | ❌ No |
-| **Custom Commands** | ✅ Lua functions | ❌ No | ❌ No | ❌ No | ❌ No |
-| **Multi-Model** | ✅ Multiple | ✅ Multiple | ✅ Multiple | ❌ Claude only | ❌ OpenAI only |
-| **Configuration** | Simple Lua files | GUI settings | GUI settings | Web UI | API config |
-| **Learning Curve** | Low (vim-like) | Medium | Low | Low | High |
-
 ## Setup
 
 ### Configuration
@@ -39,7 +26,7 @@ Kota uses Lua-based configuration (inspired by Neovim). Create a `.kota/config.l
 
 ```lua
 kota.setup({
-  model = "deepseek-chat",
+  model = "deepseek-flash",
   api_key = os.getenv("API_KEY"),
   api_base = "https://api.deepseek.com/v1",
   temperature = 0.7,
@@ -124,7 +111,7 @@ kota
 Add Kota to your `Cargo.toml`:
 ```toml
 [dependencies]
-kota = "0.1.3"
+kota = "0.1.4"
 tokio = { version = "1.0", features = ["full"] }
 anyhow = "1.0"
 ```
@@ -175,15 +162,8 @@ async fn main() -> Result<()> {
 
 ## Supported Models
 
-Kota supports various LLM providers:
-
-- **OpenAI Compatible** - (e.g., gpt-4o, gpt-4o-mini, gpt-4-turbo, gpt-3.5-turbo...)
-- **DeepSeek** - (e.g., deepseek-chat, deepseek-coder...)
-- **Anthropic Claude** (e.g., claude-3-5-sonnet, claude-4-opus...)
-
-### Other Providers
-- Any OpenAI-compatible API endpoint can be configured
-- Local models via Ollama or similar services
+Kota talks to any **OpenAI-compatible** `/chat/completions` endpoint!
+Set `api_base` in `.kota/config.lua` to point at the provider you want to use.
 
 ## CLI Features
 

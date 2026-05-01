@@ -1,8 +1,9 @@
 use anyhow::{Context, Result};
-use rig::completion::Message;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::{Path, PathBuf};
+
+use crate::kota_code::llm::Message;
 
 /// 对话上下文管理器
 #[derive(Debug, Clone)]
@@ -26,10 +27,10 @@ pub struct SessionMetadata {
 #[derive(Debug, Serialize, Deserialize)]
 struct SessionData {
     pub metadata: SessionMetadata,
-    pub messages: Vec<SerializableMessage>,
+    pub messages: Vec<Message>,
 }
 
-/// 可序列化的消息类型
+/// 可序列化的消息类型（用于 CLI 展示）
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SerializableMessage {
     pub role: String,
@@ -38,37 +39,30 @@ pub struct SerializableMessage {
 
 impl From<&Message> for SerializableMessage {
     fn from(msg: &Message) -> Self {
-        match msg {
-            Message::User { content, .. } => Self {
-                role: "user".to_string(),
-                content: content
+        let content = match (&msg.content, &msg.tool_calls) {
+            (Some(content), Some(calls)) if !calls.is_empty() => {
+                let names = calls
                     .iter()
-                    .map(|c| match c {
-                        rig::completion::message::UserContent::Text(text) => text.text.clone(),
-                        _ => "[non-text content]".to_string(),
-                    })
+                    .map(|call| call.function.name.as_str())
                     .collect::<Vec<_>>()
-                    .join(" "),
-            },
-            Message::Assistant { content, .. } => Self {
-                role: "assistant".to_string(),
-                content: content
+                    .join(", ");
+                format!("{} [tool calls: {}]", content, names)
+            }
+            (Some(content), _) => content.clone(),
+            (None, Some(calls)) if !calls.is_empty() => {
+                let names = calls
                     .iter()
-                    .map(|c| match c {
-                        rig::completion::message::AssistantContent::Text(text) => text.text.clone(),
-                        rig::completion::message::AssistantContent::ToolCall(_) => {
-                            "[tool call]".to_string()
-                        }
-                        rig::completion::message::AssistantContent::Reasoning(_) => {
-                            "[reasoning]".to_string()
-                        }
-                        rig::completion::message::AssistantContent::Image(_) => {
-                            "[image]".to_string()
-                        }
-                    })
+                    .map(|call| call.function.name.as_str())
                     .collect::<Vec<_>>()
-                    .join(" "),
-            },
+                    .join(", ");
+                format!("[tool calls: {}]", names)
+            }
+            _ => String::new(),
+        };
+
+        Self {
+            role: msg.role.clone(),
+            content,
         }
     }
 }
@@ -76,8 +70,9 @@ impl From<&Message> for SerializableMessage {
 impl From<SerializableMessage> for Message {
     fn from(msg: SerializableMessage) -> Self {
         match msg.role.as_str() {
-            "user" => Message::user(msg.content),
+            "system" => Message::system(msg.content),
             "assistant" => Message::assistant(msg.content),
+            "tool" => Message::tool(String::new(), msg.content),
             _ => Message::user(msg.content),
         }
     }
@@ -134,14 +129,9 @@ impl ContextManager {
             last_updated: now,
             message_count: self.messages.len(),
         };
-        let serializable_messages: Vec<SerializableMessage> = self
-            .messages
-            .iter()
-            .map(SerializableMessage::from)
-            .collect();
         let session_data = SessionData {
             metadata,
-            messages: serializable_messages,
+            messages: self.messages.clone(),
         };
         let json_data = serde_json::to_string_pretty(&session_data)
             .context("Failed to serialize session data")?;
@@ -159,11 +149,7 @@ impl ContextManager {
             .with_context(|| format!("Failed to read session file: {:?}", file_path))?;
         let session_data: SessionData =
             serde_json::from_str(&json_data).context("Failed to deserialize session data")?;
-        self.messages = session_data
-            .messages
-            .into_iter()
-            .map(Message::from)
-            .collect();
+        self.messages = session_data.messages;
         Ok(true)
     }
 

@@ -3,15 +3,15 @@ use crate::kota_code::context::ContextManager;
 use crate::kota_code::skills::SkillManager;
 use anyhow::Result;
 use colored::*;
-use rustyline::error::ReadlineError;
 use rustyline::Editor;
+use rustyline::error::ReadlineError;
 
 mod command;
 pub mod command_registry;
 mod render;
 mod tab;
 
-pub use command_registry::{parse_command_input, CommandRegistry};
+pub use command_registry::{CommandRegistry, parse_command_input};
 use tab::KotaHelper;
 
 const LOGO: &str = r#"
@@ -37,11 +37,17 @@ impl KotaCli {
         api_key: String,
         api_base: String,
         model_name: String,
+        temperature: Option<f64>,
         context: ContextManager,
         skill_manager: SkillManager,
         command_registry: Option<CommandRegistry>,
     ) -> Result<Self> {
-        let agent_instance = AgentBuilder::new(api_key.clone(), model_name.clone())?
+        let mut builder =
+            AgentBuilder::new(api_key.clone(), model_name.clone())?.with_api_base(api_base.clone());
+        if let Some(temperature) = temperature {
+            builder = builder.with_temperature(temperature);
+        }
+        let agent_instance = builder
             .with_context(context)
             .with_skill_manager(skill_manager)
             .build()?;

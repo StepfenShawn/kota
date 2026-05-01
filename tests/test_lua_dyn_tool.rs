@@ -1,5 +1,5 @@
-use kota::kota_code::runtime::dyn_tools_loader::{dyn_tool::LuaDynTool, LuaToolLoader};
-use rig::tool::ToolDyn;
+use kota::kota_code::llm::ToolDyn;
+use kota::kota_code::runtime::dyn_tools_loader::{LuaToolLoader, dyn_tool::LuaDynTool};
 use serde_json::json;
 use std::fs;
 use tempfile::TempDir;

@@ -12,13 +12,14 @@ pub mod kota_code;
 
 // Re-export commonly used types for convenience
 pub use kota_code::{
-    create_agent, AgentBuilder, AgentInstance, AgentType, CommandDef, ContextManager, KotaConfig,
-    McpClient, McpManager, Plan, PlanManager, Provider, SerializableMessage, SessionIdHook,
-    SessionMetadata, Skill, SkillManager, Task, TaskStatus, ToolRegistry,
+    AgentBuilder, AgentInstance, ChatResponse, CommandDef, ContextManager, KotaConfig, McpClient,
+    McpManager, Message, OpenAiClient, Plan, PlanManager, SerializableMessage, SessionIdHook,
+    SessionMetadata, Skill, SkillManager, Task, TaskStatus, Tool, ToolDefinition, ToolDyn,
+    ToolRegistry, Usage, create_agent,
 };
 
 // Re-export CLI components for testing
-pub use kota_cli::{parse_command_input, CommandRegistry};
+pub use kota_cli::{CommandRegistry, parse_command_input};
 
 /// Prelude module for convenient imports
 pub mod prelude {

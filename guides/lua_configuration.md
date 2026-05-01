@@ -8,10 +8,10 @@ Create a `.kota/config.lua` file in your project root:
 
 ```lua
 kota.setup({
-  model = "deepseek-chat",
+  model = "deepseek-flash",
   api_key = os.getenv("API_KEY"),
   api_base = "https://api.deepseek.com/v1",
-  temperature = 0.7,
+  temperature = 1.0,
   
   tools = {
     enabled = { "grep_find", "write_file", "read_file" },
@@ -51,14 +51,13 @@ kota.setup({
 ### Basic Settings
 
 - **model** (string): The LLM model to use
-  - Examples: `"gpt-4o"`, `"claude-3-5-sonnet"`, `"deepseek-chat"`
+  - Examples: `"gpt-4o"`, `"deepseek-flash"`
   
 - **api_key** (string): Your API key for the LLM provider
   - Can use `os.getenv("API_KEY")` to read from environment variables
   
 - **temperature** (number, optional): Temperature for LLM responses
-  - Default: `0.7`
-  - Range: `0.0` to `2.0`
+  - Default: `1.0`
 
 ### Tools Configuration
 

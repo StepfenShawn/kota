@@ -1,8 +1,8 @@
 kota.setup({
-  model = "deepseek-chat",
+  model = "deepseek-flash",
   api_key = os.getenv("API_KEY"),
   api_base = "https://api.deepseek.com/v1",
-  temperature = 0.7,
+  temperature = 1.0,
   
   tools = {
     enabled = { "grep_find", "write_file", "read_file" },
