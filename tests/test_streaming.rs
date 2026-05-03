@@ -43,9 +43,12 @@ async fn test_stream_completion_content_and_usage() {
 
     let mut streamed = String::new();
     let response = client
-        .stream_completion(&[Message::user("hi")], &[], |token| {
-            streamed.push_str(token)
-        })
+        .stream_completion(
+            &[Message::user("hi")],
+            &[],
+            |token| streamed.push_str(token),
+            |_| {},
+        )
         .await
         .unwrap();
 
@@ -73,7 +76,7 @@ async fn test_stream_completion_accumulates_tool_calls() {
     .unwrap();
 
     let response = client
-        .stream_completion(&[Message::user("read a.txt")], &[], |_| {})
+        .stream_completion(&[Message::user("read a.txt")], &[], |_| {}, |_| {})
         .await
         .unwrap();
 

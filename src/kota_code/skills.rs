@@ -95,12 +95,21 @@ impl SkillManager {
     /// 创建默认技能
     fn create_default_skills(&self) -> Result<()> {
         let defaults = vec![
-            ("code-review", "Code review and quality analysis", 
-             "You are a professional code reviewer. Carefully check code quality, security, performance and best practices."),
-            ("refactor", "Code refactoring and optimization",
-             "You are a refactoring expert. Help improve code structure, readability and maintainability while preserving functionality."),
-            ("debug", "Problem diagnosis and debugging",
-             "You are a debugging expert. Help locate and fix issues in code with detailed analysis and solutions."),
+            (
+                "code-review",
+                "Code review and quality analysis",
+                "You are a professional code reviewer. Carefully check code quality, security, performance and best practices.",
+            ),
+            (
+                "refactor",
+                "Code refactoring and optimization",
+                "You are a refactoring expert. Help improve code structure, readability and maintainability while preserving functionality.",
+            ),
+            (
+                "debug",
+                "Problem diagnosis and debugging",
+                "You are a debugging expert. Help locate and fix issues in code with detailed analysis and solutions.",
+            ),
         ];
 
         for (name, desc, inst) in defaults {

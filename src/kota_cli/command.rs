@@ -465,7 +465,6 @@ impl KotaCli {
     }
 
     async fn handle_ai_chat(&mut self, input: &str) -> Result<()> {
-        println!("{}", "🧠 Thinking...".yellow());
         println!("{}", "● kota:".blue());
 
         let response_result = self.agent_instance.chat(input).await;
@@ -474,11 +473,12 @@ impl KotaCli {
 
         match response_result {
             Ok(resp) => {
-                println!(
+                let disply = format!(
                     "{} Total tokens used: {}",
                     "📊".bright_blue(),
                     resp.usage().total_tokens
                 );
+                println!("{}", disply.dimmed());
             }
             Err(e) => {
                 println!("{} Failed to get AI response: {}", "❌".red(), e);

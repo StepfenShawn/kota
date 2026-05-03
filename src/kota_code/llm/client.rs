@@ -52,6 +52,8 @@ struct StreamChoice {
 struct StreamDelta {
     #[serde(default)]
     content: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    reasoning_content: Option<String>,
     #[serde(default)]
     tool_calls: Option<Vec<StreamToolCall>>,
 }
@@ -101,7 +103,7 @@ impl OpenAiClient {
         temperature: Option<f64>,
     ) -> Result<Self> {
         let http = Client::builder()
-            .timeout(Duration::from_secs(300))
+            .timeout(Duration::from_secs(3000))
             .build()
             .map_err(|e| anyhow!("Failed to create HTTP client: {}", e))?;
 
@@ -180,14 +182,16 @@ impl OpenAiClient {
     }
 
     /// Streaming completion using SSE. `on_token` is called for every content delta.
-    pub async fn stream_completion<F>(
+    pub async fn stream_completion<F1, F2>(
         &self,
         messages: &[Message],
         tools: &[ToolDefinition],
-        mut on_token: F,
+        mut on_token: F1,
+        mut on_reasoning: F2,
     ) -> Result<CompletionResponse>
     where
-        F: FnMut(&str),
+        F1: FnMut(&str),
+        F2: FnMut(&str),
     {
         let url = self.endpoint();
 
@@ -272,6 +276,10 @@ impl OpenAiClient {
                     {
                         content.push_str(&delta_content);
                         on_token(&delta_content);
+                    }
+
+                    if let Some(delta_reasoning_context) = choice.delta.reasoning_content {
+                        on_reasoning(&delta_reasoning_context);
                     }
 
                     for delta_call in choice.delta.tool_calls.unwrap_or_default() {

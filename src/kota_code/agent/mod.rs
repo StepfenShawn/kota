@@ -1,4 +1,7 @@
+use colored::*;
 use std::io::Write;
+use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 
 use anyhow::{Result, anyhow};
 
@@ -88,12 +91,28 @@ impl AgentInstance {
         let mut final_content = None;
 
         for _ in 0..MAX_TOOL_TURNS {
+            let thinking = Arc::new(AtomicBool::new(false));
+            
             let response = self
                 .client
-                .stream_completion(&working, &tool_definitions, |token| {
-                    print!("{}", token);
-                    let _ = std::io::stdout().flush();
-                })
+                .stream_completion(
+                    &working,
+                    &tool_definitions,
+                    |token| {
+                        // TODO: move to kota_cli?
+                        thinking.swap(false, Ordering::Relaxed);
+                        print!("{}", token);
+                        let _ = std::io::stdout().flush();
+                    },
+                    |token| {
+                        // TODO: move to kota_cli?
+                        if !thinking.swap(true, Ordering::Relaxed) {
+                            println!("{} ", "🧠 Thinking...".yellow());
+                        }
+                        print!("{}", token.dimmed());
+                        let _ = std::io::stdout().flush();
+                    },
+                )
                 .await?;
             usage.add(response.usage);
 

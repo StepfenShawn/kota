@@ -2,7 +2,7 @@ use mlua::prelude::*;
 use std::collections::HashMap;
 
 // Import the types we need from the kota crate
-use kota::{parse_command_input, CommandDef, CommandRegistry, KotaConfig};
+use kota::{CommandDef, CommandRegistry, KotaConfig, parse_command_input};
 
 #[cfg(test)]
 mod tests {

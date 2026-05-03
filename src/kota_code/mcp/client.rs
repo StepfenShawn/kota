@@ -1,9 +1,9 @@
 use anyhow::{Context, Result};
 use rmcp::{
+    ServiceExt,
     model::{CallToolRequestParams, InitializeResult, Tool},
     service::{RoleClient, RunningService},
     transport::{ConfigureCommandExt, TokioChildProcess},
-    ServiceExt,
 };
 use serde_json::Value;
 use std::borrow::Cow;
