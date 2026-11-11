@@ -228,7 +228,9 @@ impl OpenAiClient {
             }
         };
 
-        let mut buffer = String::new();
+        // SSE is newline-delimited. `\n` is ASCII, so it never sits inside a
+        // multi-byte UTF-8 sequence; decode each complete line, not each TCP/HTTP chunk.
+        let mut buffer = Vec::new();
         let mut content = String::new();
         let mut tool_calls: Vec<ToolCallAccumulator> = Vec::new();
         let mut usage = Usage::default();
@@ -239,10 +241,13 @@ impl OpenAiClient {
             .await
             .map_err(|e| anyhow!("Failed to read stream from '{}': {}", url, e))?
         {
-            buffer.push_str(&String::from_utf8_lossy(&chunk));
+            buffer.extend_from_slice(&chunk);
 
-            while let Some(newline) = buffer.find('\n') {
-                let line = buffer[..newline].trim_end_matches('\r').to_string();
+            while let Some(newline) = buffer.iter().position(|&b| b == b'\n') {
+                let line = {
+                    let raw = buffer[..newline].strip_suffix(b"\r").unwrap_or(&buffer[..newline]);
+                    String::from_utf8_lossy(raw).into_owned()
+                };
                 buffer.drain(..=newline);
 
                 let Some(payload) = line.strip_prefix("data:") else {
