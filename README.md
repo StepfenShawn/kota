@@ -1,6 +1,11 @@
 <a href="https://docs.rs/kota/latest/kota"><img src="https://img.shields.io/badge/docs-API Reference-dca282.svg" /></a> 
 <a href="https://crates.io/crates/kota"><img src="https://img.shields.io/crates/v/kota.svg?color=dca282" /></a>  &nbsp;
 # Kota
+
+<!-- yarkr:badges:start -->
+[![Indexed on Yarkr](https://api.yarkr.com/functions/v1/api/api/v1/badges/repos/StepfenShawn/kota/version.svg)](https://yarkr.com/arks/stepfenshawn/kota)
+<!-- yarkr:badges:end -->
+
 A lightweight, highly extensible ai code agent, built in Rust:    
 
 ![kota_screenshot](assert/screenshort.jpg)
@@ -115,6 +120,40 @@ kota = "0.1.4"
 tokio = { version = "1.0", features = ["full"] }
 anyhow = "1.0"
 ```
+
+<!-- yarkr:install:start -->
+## Install with Yarkr
+
+This repo is indexed on [Yarkr](https://yarkr.com/arks/stepfenshawn/kota) as the ark [stepfenshawn/kota](https://yarkr.com/arks/stepfenshawn/kota), so its skills install into Claude Code, Codex, Cursor and other agent harnesses with one command.
+
+### CLI
+
+Install the whole ark, which Yarkr keeps equal to this repo:
+
+```bash
+npx yarkr-cli sync stepfenshawn/kota
+```
+
+Or add individual skills:
+
+```bash
+npx yarkr-cli add skill:stepfenshawn/kota/code-review
+npx yarkr-cli add skill:stepfenshawn/kota/debug
+npx yarkr-cli add skill:stepfenshawn/kota/example
+```
+
+No Node.js? `curl -fsSL https://yarkr.com/install.sh | sh` (macOS, Linux) or `irm https://yarkr.com/install.ps1 | iex` (Windows PowerShell) installs `yarkr` as a standalone binary; then type `yarkr` in place of `npx yarkr-cli`.
+
+### MCP
+
+Connect your agent to the ark over MCP:
+
+```bash
+npx yarkr-cli mcp add stepfenshawn/kota
+```
+
+Or point any MCP client at `https://api.yarkr.com/functions/v1/api/mcp/o/stepfenshawn/kota`.
+<!-- yarkr:install:end -->
 
 ## Usage as a Library
 
